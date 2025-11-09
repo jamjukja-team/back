@@ -1,9 +1,11 @@
 package com.supercoding.hrms.pay.controller;
 
+import com.supercoding.hrms.pay.dto.PayrollCreateRequest;
 import com.supercoding.hrms.pay.dto.PayrollSummaryResponse;
 import com.supercoding.hrms.pay.dto.PayrollDetailResponse;
 import com.supercoding.hrms.pay.service.PayrollService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -14,21 +16,67 @@ public class PayrollController {
 
     private final PayrollService payrollService;
 
-    /**
-     * ✅ [관리자용] 전체 급여 목록 조회
-     * 예시: GET http://localhost:8080/api/payrolls
-     */
-    @GetMapping
-    public List<PayrollSummaryResponse> getAllPayrolls() {
-        return payrollService.getPayrollSummaries();
+    //Create, 급여 이력 생성
+    @PostMapping
+    public ResponseEntity<PayrollDetailResponse> createPayroll(@RequestBody PayrollCreateRequest request) {
+        PayrollDetailResponse response = payrollService.createPayroll(request);
+        return ResponseEntity.ok(response);
     }
 
-    /**
-     * ✅ 급여 상세 조회 (직원/관리자 공통)
-     * 예시: GET http://localhost:8080/api/payrolls/1
-     */
-    @GetMapping("/{id}")
-    public PayrollDetailResponse getPayrollDetail(@PathVariable Long id) {
-        return payrollService.getPayrollDetail(id);
+    //R(L) (Read List), 전체 급여 목록 조회 (관리자용)
+    @GetMapping("")
+    public ResponseEntity<List<PayrollSummaryResponse>> getAllPayrolls() {
+        return ResponseEntity.ok(payrollService.getPayrollSummaries());
     }
+
+    //R (Read), 특정 급여 이력 상세 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<PayrollDetailResponse> getPayrollDetail(@PathVariable Long id) {
+        PayrollDetailResponse response = payrollService.getPayrollDetail(id);
+        return ResponseEntity.ok(response);
+    }
+
+    //U (Update), 급여 이력 수정 (예: 상태, 날짜 등)
+    @PutMapping("/{id}")
+    public ResponseEntity<PayrollDetailResponse> updatePayroll(
+            @PathVariable Long id,
+            @RequestBody PayrollCreateRequest request) {
+        PayrollDetailResponse response = payrollService.updatePayroll(id, request);
+        return ResponseEntity.ok(response);
+    }
+
+    //D (Delete), 단일 급여 이력 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Boolean> deletePayroll(@PathVariable Long id) {
+        payrollService.deletePayroll(id);
+        return ResponseEntity.ok(true);
+    }
+
+    //D(L) (Delete List), 여러 급여 이력 일괄 삭제
+    @DeleteMapping
+    public ResponseEntity<Boolean> deletePayrolls(@RequestBody List<Long> ids) {
+        payrollService.deletePayrolls(ids);
+        return ResponseEntity.ok(true);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
