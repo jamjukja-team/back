@@ -6,20 +6,21 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.List;
 
+//애는 Payroll안에 들어감
 @Getter
 @NoArgsConstructor
 public class PayrollCreateRequest {
     private Long empId;
     private String payMonth;
-    private LocalDate payDate;
-    private PayrollStatus status;
+    private String status;
     private List<ItemCreateRequest> items;
 
+    //애는 PayrollDetail 안에 들어감
     @Getter
     @NoArgsConstructor
     public static class ItemCreateRequest {
         private String itemCode;
         private int amount;
-        private String remark;
+        private String note;
     }
 }

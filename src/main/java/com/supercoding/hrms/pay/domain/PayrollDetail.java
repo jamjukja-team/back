@@ -7,27 +7,20 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"payroll", "item"}) // 🔹 무한루프 방지
 @Entity
 @Table(name = "payroll_detail")
 public class PayrollDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "payroll_detail_id")
     private Long payrollDetailId;
 
+    @Column(name = "amount")
     private Integer amount;   // 금액
+    @Column(name = "remark")
     private String remark;    // 비고
+    @Column(name = "empId")
     private Long empId;       // 직원 ID
-
-    // ✅ 급여 이력과의 연관관계 (N:1)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pay_hist_id")
-    private Payroll payroll;
-
-    // ✅ 급여 항목(ItemNm)과의 연관관계 (N:1)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cd")
-    private ItemNm item;
 
 }
