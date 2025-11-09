@@ -4,6 +4,7 @@ import com.supercoding.hrms.pay.dto.PayrollSummaryResponse;
 import com.supercoding.hrms.pay.dto.PayrollDetailResponse;
 import com.supercoding.hrms.pay.service.PayrollService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -18,9 +19,10 @@ public class PayrollController {
      * ✅ [관리자용] 전체 급여 목록 조회
      * 예시: GET http://localhost:8080/api/payrolls
      */
-    @GetMapping
-    public List<PayrollSummaryResponse> getAllPayrolls() {
-        return payrollService.getPayrollSummaries();
+
+    @GetMapping("")
+    public ResponseEntity<List<PayrollSummaryResponse>> getPayrolls(){
+        return ResponseEntity.ok(payrollService.getPayrollSummaries());
     }
 
     /**

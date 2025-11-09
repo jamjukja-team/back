@@ -22,6 +22,9 @@ public class PayrollService {
     private final PayrollDetailRepository payrollDetailRepository;
     private final ItemNmRepository itemNmRepository;
 
+    //C, R, R(L), U, D, D(L) 규칙에 따라
+    // 지금 R 다건으로 만들었음
+
     //[관리자용] 전체 급여 목록 조회
     public List<PayrollSummaryResponse> getPayrollSummaries() {
         return payrollRepository.findAll().stream()
