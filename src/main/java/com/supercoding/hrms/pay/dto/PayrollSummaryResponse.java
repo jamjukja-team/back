@@ -19,5 +19,5 @@ public class PayrollSummaryResponse {
     private Integer overHour;       // 연장 근무시간
     private Integer deduction;      // 공제액
     private Integer actualAmount;   // 실지급액
-    private PayrollStatus status;   // 급여 상태
+    private String status;   // 급여 상태
 }

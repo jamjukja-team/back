@@ -19,8 +19,8 @@ public class PayrollDetailResponse {
     private String empName;             // 직원 이름
     private String deptName;            // 부서명
     private String payMonth;            // 급여월
-    private PayrollStatus status;       // 상태
-    private LocalDate payDate;          // 급여 지급일
+    private String status;       // 상태
+    private String payDate;          // 급여 지급일
     private Integer totalAmount;        // 총 금액
     private Integer actualAmount;       // 실지급액
     private List<ItemResponse> items;   // 상세 항목 리스트
