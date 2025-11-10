@@ -48,7 +48,11 @@ public class PayrollService {
         Payroll payroll = payrollRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 급여이력이 없습니다."));
 
-        List<ItemResponse> items = payroll.getDetails().stream()
+        // 🔹 PayrollDetailRepository를 사용해서 급여 항목 조회
+        List<PayrollDetail> details = payrollDetailRepository.findByPayHistId(id);
+
+        // 🔹 PayrollDetail → ItemResponse 변환
+        List<ItemResponse> items = details.stream()
                 .map(this::mapToItemResponse)
                 .collect(Collectors.toList());
 
@@ -112,8 +116,8 @@ public class PayrollService {
     //Private Helper
     private ItemResponse mapToItemResponse(PayrollDetail detail) {
         return new ItemResponse(
-                detail.getItem().getCd(),
-                detail.getItem().getNm(),
+                detail.getItemCd(),
+                detail.getItemNm(),
                 detail.getAmount(),
                 detail.getRemark()
         );
