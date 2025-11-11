@@ -10,7 +10,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = "details") // 🔹 무한루프 방지
 @Entity
 @Table(name = "payroll")
 @Builder
@@ -28,7 +27,7 @@ public class Payroll {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private PayrollStatus status;
 
     @Column(name = "pay_date")
     private String payDate;

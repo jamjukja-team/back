@@ -10,6 +10,7 @@ import com.supercoding.hrms.pay.dto.PayrollSummaryResponse;
 import com.supercoding.hrms.pay.repository.ItemNmRepository;
 import com.supercoding.hrms.pay.repository.PayrollDetailRepository;
 import com.supercoding.hrms.pay.repository.PayrollRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,18 +28,31 @@ public class PayrollService {
     // 지금 R 다건으로 만들었음
 
     // C (Create), 급여 이력 생성
-    public boolean createPayroll(PayrollCreateRequest request) {
+    public PayrollDetailResponse createPayroll(PayrollCreateRequest request) {
         // PayrollCreateRequest → Payroll 변환
         Payroll payroll = Payroll.builder()
                 .empId(request.getEmpId())
                 .payMonth(request.getPayMonth())
-                .status(request.getStatus())
+                .status(PayrollStatus.from(request.getStatus()))
                 .build();
-        Payroll saved = payrollRepository.save(payroll);
-        if(saved != null) {
-            return true;
-        }
-        return false;
+        Payroll savedPayroll = payrollRepository.save(payroll);
+
+        // 2️⃣ items → PayrollDetail로 변환 후 저장
+        List<PayrollDetail> details = request.getItems().stream()
+                .map(item -> PayrollDetail.builder()
+                        .payHistId(savedPayroll.getPayHistId()) // FK 연결
+                        .empId(savedPayroll.getEmpId())
+                        .itemCd(item.getItemCd())
+                        .itemNm(item.getItemNm())
+                        .amount(item.getAmount())
+                        .remark(item.getRemark())
+                        .build())
+                .collect(Collectors.toList());
+
+        payrollDetailRepository.saveAll(details);
+
+        // 3️⃣ 다시 조회해서 응답 반환
+        return getPayroll(savedPayroll.getPayHistId());
     }
 
     //R (단건 조회)
@@ -65,7 +79,7 @@ public class PayrollService {
                 "김직원",
                 "개발팀",
                 payroll.getPayMonth(),
-                PayrollStatus.from(payroll.getStatus()).getDisplayName(),
+                payroll.getStatus().getDisplayName(),
                 payroll.getPayDate(),
                 totalAmount,
                 actualAmount,
@@ -86,31 +100,47 @@ public class PayrollService {
                         0,
                         229500,
                         2744820,
-                        PayrollStatus.from(p.getStatus()).getDisplayName()
+                        p.getStatus().getDisplayName()
                 ))
                 .collect(Collectors.toList());
     }
 
     //U (Update)
-    public PayrollDetailResponse updatePayroll(Long id, PayrollCreateRequest request) {
+    @Transactional
+    public void updatePayroll(Long id, PayrollCreateRequest request) {
         Payroll payroll = payrollRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 급여이력이 없습니다."));
 
         payroll.setPayMonth(request.getPayMonth());
-        payroll.setStatus(request.getStatus());
-
-        payrollRepository.save(payroll);
-        return getPayroll(id);
+        payroll.setStatus(PayrollStatus.from(request.getStatus()));
     }
 
     //D (단건 삭제)
-    public void deletePayroll(Long id) {
-        payrollRepository.deleteById(id);
+    public boolean deletePayroll(Long id) {
+        if (!payrollRepository.existsById(id)) {
+            return false; // 해당 ID 없음
+        }
+
+        try {
+            payrollRepository.deleteById(id);
+            return true; // 삭제 성공
+        } catch (Exception e) {
+            return false; // 삭제 중 오류
+        }
     }
 
     //D(L) (다건 삭제)
-    public void deletePayrolls(List<Long> ids) {
-        payrollRepository.deleteAllById(ids);
+    public boolean deletePayrolls(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return false; // 삭제할 ID가 없음
+        }
+
+        try {
+            payrollRepository.deleteAllById(ids);
+            return true; // 삭제 성공
+        } catch (Exception e) {
+            return false; // 중간에 오류 발생
+        }
     }
 
     //Private Helper
