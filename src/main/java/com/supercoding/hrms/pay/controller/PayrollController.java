@@ -1,8 +1,6 @@
 package com.supercoding.hrms.pay.controller;
 
-import com.supercoding.hrms.pay.dto.PayrollCreateRequest;
-import com.supercoding.hrms.pay.dto.PayrollSummaryResponse;
-import com.supercoding.hrms.pay.dto.PayrollDetailResponse;
+import com.supercoding.hrms.pay.dto.PayrollType;
 import com.supercoding.hrms.pay.service.PayrollService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,8 +18,8 @@ public class PayrollController {
     //C (Create)
     //급여 이력 생성
     @PostMapping
-    public ResponseEntity<PayrollDetailResponse> createPayroll(@RequestBody PayrollCreateRequest request) {
-        PayrollDetailResponse response = payrollService.createPayroll(request);
+    public ResponseEntity<PayrollType> createPayroll(@RequestBody PayrollType request) {
+        PayrollType response = payrollService.createPayroll(request);
         return ResponseEntity.ok(response);
     }
 
@@ -45,12 +43,13 @@ public class PayrollController {
     @PutMapping("/{id}")
     public ResponseEntity<Boolean> updatePayroll(
             @PathVariable Long id,
-            @RequestBody PayrollCreateRequest request) {
+            @RequestBody PayrollDetailResponse request) {
         try {
             payrollService.updatePayroll(id, request);
             return ResponseEntity.ok(true);
 
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.ok(false);
         }
     }

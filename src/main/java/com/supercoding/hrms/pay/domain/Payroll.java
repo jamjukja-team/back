@@ -22,12 +22,9 @@ public class Payroll {
 
     @Column(name = "emp_id")
     private Long empId;
-    @Column(name = "pay_month")
-    private String payMonth; // ex) "2025.10"
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private PayrollStatus status;
+    private String status;
 
     @Column(name = "pay_date")
     private String payDate;
