@@ -1,8 +1,9 @@
 package com.supercoding.hrms.pay.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
 
+@Getter
 public enum PayrollStatus {
 
     CALCULATING("계산중"),
@@ -19,7 +20,7 @@ public enum PayrollStatus {
     @JsonCreator
     public static PayrollStatus from(String code) {
         for (PayrollStatus status : PayrollStatus.values()) {
-            if (status.name().equalsIgnoreCase(code)) {
+            if (status.name().equalsIgnoreCase(code) || status.getKoreanName().equals(code)) {
                 return status;
             }
         }

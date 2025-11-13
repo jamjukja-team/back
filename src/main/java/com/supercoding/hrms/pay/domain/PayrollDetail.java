@@ -14,12 +14,14 @@ public class PayrollDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // 배준성의 4대보험
     @Column(name = "payroll_detail_id")
     private Long payrollDetailId;
 
     @Column(name = "emp_id")
     private Long empId;
 
+    // 4대보험
     @Column(name = "item_cd")
     private String itemCd;          // 예: "B001", "D002" 등 항목 코드
 

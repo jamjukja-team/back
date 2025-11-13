@@ -3,11 +3,13 @@ package com.supercoding.hrms.pay.controller;
 import com.supercoding.hrms.pay.dto.PayrollType;
 import com.supercoding.hrms.pay.service.PayrollService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/payroll")
 @RequiredArgsConstructor //생성자 자동 주입
@@ -26,26 +28,26 @@ public class PayrollController {
     //R(L) (Read List)
     //전체 급여 목록 조회 (관리자용)
     @GetMapping("/list")
-    public ResponseEntity<List<PayrollSummaryResponse>> getPayrolls() {
+    public ResponseEntity<List<PayrollType>> getPayrolls() {
         return ResponseEntity.ok(payrollService.getPayrolls());
     }
 
     //R (Read)
     //특정 급여 이력 상세 조회
     @GetMapping("/{id}")
-    public ResponseEntity<PayrollDetailResponse> getPayroll(@PathVariable Long id) {
-        PayrollDetailResponse response = payrollService.getPayroll(id);
+    public ResponseEntity<PayrollType> getPayroll(@PathVariable Long id) {
+        // 특정 id를 넣어서 서비스의 getPayroll 실행
+        PayrollType response = payrollService.getPayroll(id);
         return ResponseEntity.ok(response);
     }
 
     //U (Update)
     //급여 이력 수정 (예: 상태, 날짜 등)
-    @PutMapping("/{id}")
+    @PutMapping()
     public ResponseEntity<Boolean> updatePayroll(
-            @PathVariable Long id,
-            @RequestBody PayrollDetailResponse request) {
+            @RequestBody PayrollType request) {
         try {
-            payrollService.updatePayroll(id, request);
+            payrollService.updatePayroll(request);
             return ResponseEntity.ok(true);
 
         } catch (Exception e) {
@@ -56,9 +58,9 @@ public class PayrollController {
 
     //D (Delete)
     //단일 급여 이력 삭제
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deletePayroll (@PathVariable Long id){
-        boolean result = payrollService.deletePayroll(id);
+    @DeleteMapping("/{histId}")
+    public ResponseEntity<Boolean> deletePayroll (@PathVariable Long histId){
+        boolean result = payrollService.deletePayroll(histId);
         return result
                 ? ResponseEntity.ok(true)
                 : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
@@ -67,7 +69,7 @@ public class PayrollController {
     //D(L) (Delete List)
     //여러 급여 이력 일괄 삭제
     @DeleteMapping
-    public ResponseEntity<Boolean> deletePayrolls (@RequestBody List < Long > ids) {
+    public ResponseEntity<Boolean> deletePayrolls (@RequestParam List < Long > ids) {
         boolean result = payrollService.deletePayrolls(ids);
         return result
                 ? ResponseEntity.ok(true)

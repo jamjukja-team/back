@@ -9,11 +9,13 @@ import com.supercoding.hrms.pay.repository.PayrollDetailRepository;
 import com.supercoding.hrms.pay.repository.PayrollRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PayrollService {
@@ -27,54 +29,64 @@ public class PayrollService {
     // C (Create), 급여 이력 생성
     public PayrollType createPayroll(PayrollType request) {
         // PayrollCreateRequest → Payroll 변환
+
+        // 프론트에서 준 정보(request) 가지고 Payroll에 맵핑해줌
         Payroll payroll = Payroll.builder()
                 .empId(request.getEmpId())
                 .payDate(request.getPayDate())
                 .status(PayrollStatus.from(request.getStatus()).getDisplayName())
                 .build();
+        // 맵핑한 payroll을 DB(MySQL)에 저장
         Payroll savedPayroll = payrollRepository.save(payroll);
 
-        // 2️⃣ items → PayrollDetail로 변환 후 저장
-        syncPayrollDetails(request.getItems(), savedPayroll.getPayHistId(), savedPayroll.getEmpId());
+        // payrollDetail 저장
+        syncPayrollDetails(request.getItems(), savedPayroll.getEmpId());
 
         // 3️⃣ 다시 조회해서 응답 반환
         return getPayroll(savedPayroll.getPayHistId());
     }
 
-    public void syncPayrollDetails(List<PayrollDetail> items, Long histId, Long empId){
+    // 한사람의 detail을 저장하거나 업데이트 함
+    public void syncPayrollDetails(List<PayrollDetail> items, Long empId){
+        // empId 기반으로 detail 불러옴
+        List<PayrollDetail> details = payrollDetailRepository.findByEmpId(empId);
+        List<String> itemCds = details.stream().map(PayrollDetail::getItemCd).toList();;
 
-        List<PayrollDetail> details = items.stream()
-                .map(item -> {
-                    PayrollDetail.PayrollDetailBuilder builder = PayrollDetail.builder()
-                            .empId(empId)
-                            .itemCd(item.getItemCd())
-                            .amount(item.getAmount())
-                            .remark(item.getRemark());
+        List<PayrollDetail> newDetails = items.stream().map(item ->{
+            if(itemCds.contains(item.getItemCd())){
+                //detail id가 포함되면 업데이트
+                return PayrollDetail.builder()
+                        .payrollDetailId(details.get(itemCds.indexOf(item.getItemCd())).getPayrollDetailId())
+                        .empId(empId)
+                        .itemCd(item.getItemCd())
+                        .amount(item.getAmount())
+                        .remark(item.getRemark())
+                        .build();
+            } else{
+                //포함안되면 저장
+                return PayrollDetail.builder()
+                        .empId(empId)
+                        .itemCd(item.getItemCd())
+                        .amount(item.getAmount())
+                        .remark(item.getRemark())
+                        .build();
+            }
+        }).toList();
 
-                    // ✅ update 모드일 경우 (detail pk 존재)
-                    if (histId != null) {
-                        builder.payrollDetailId(histId); // detail의 PK를 직접 지정
-                    }
-
-                    return builder.build();
-                })
-                .collect(Collectors.toList());
-
-        payrollDetailRepository.saveAll(details);
+        payrollDetailRepository.saveAll(newDetails);
     }
-
 
     //R (단건 조회)
     //급여 상세 조회 (직원/관리자 공통)
     //특정 payHistId 기준으로 급여명세서 세부 항목 조회
-    public PayrollType getPayroll(Long empId) {
-        Payroll payroll = payrollRepository.findById(empId)
+    public PayrollType getPayroll(Long histId) {
+        // 조회하고자 하는 Payroll의 id(histId)를 통해 조회하고자 하는 payroll 불러옴
+        Payroll payroll = payrollRepository.findById(histId)
                 .orElseThrow(() -> new RuntimeException("해당 급여이력이 없습니다."));
 
-        // 🔹 PayrollDetailRepository를 사용해서 급여 항목 조회
-
+        // 내가 반환하고자 하는 타입(PayrollType)으로 payroll을 맵핑해줌
         return new PayrollType(
-                payroll.getPayHistId(),
+                histId,
                 payroll.getEmpId(),
                 "김직원",
                 "개발팀",
@@ -82,7 +94,7 @@ public class PayrollService {
                 0,
                 PayrollStatus.from(payroll.getStatus()).getDisplayName(),
                 payroll.getPayDate(),
-                getDetails(empId)
+                getDetails(payroll.getEmpId())
         );
     }
 
@@ -105,24 +117,26 @@ public class PayrollService {
     }
 
     public List<PayrollDetail> getDetails(Long empId){
+        // 조회하고자하는 payroll의 사원id를 사용하여 items 불러오는거
+//        log.info("empId : {}", empId);
         return payrollDetailRepository.findByEmpId(empId);
     }
 
     //U (Update)
     @Transactional
-    public void updatePayroll(Long id, PayrollType request) {
+    public void updatePayroll(PayrollType request) {
         Payroll payroll = Payroll.builder()
+                .payHistId(request.getPayHistId())
                 .empId(request.getEmpId())
                 .payDate(request.getPayDate())
                 .status(PayrollStatus.from(request.getStatus()).getDisplayName())
                 .build();
 
-        Payroll savePayroll = payrollRepository.save(payroll);
+        // 매핑한 payroll로 업데이트
+        payrollRepository.save(payroll);
 
-        payrollRepository.save(savePayroll);
-
-        syncPayrollDetails(request.getItems(), request.getPayHistId(), request.getEmpId());
-
+        // payrollDetail은 따로 업데이트 해야 함.
+        syncPayrollDetails(request.getItems(), request.getEmpId());
     }
 
     //D (단건 삭제)
