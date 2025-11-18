@@ -23,4 +23,10 @@ public class DevTestController {
         Integer result = jdbcTemplate.queryForObject("SELECT 1", Integer.class);
         return "db ok: " + result;
     }
+
+    // 깃 액션 체크
+    @GetMapping("/dev-test/action")
+    public String action() {
+        return "action ok";
+    }
 }
