@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 
-@Repository
+@Entity
 @Table(name = "attendance")
 @NoArgsConstructor
 @AllArgsConstructor
