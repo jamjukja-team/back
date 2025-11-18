@@ -22,5 +22,4 @@ jobs:
           script: |
             cd /home/ec2-user/back
             git pull origin develop
-            docker-compose down
             docker-compose up -d --build
