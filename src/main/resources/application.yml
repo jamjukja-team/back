@@ -1,3 +1,5 @@
 spring:
   application:
     name: hrms
+  profiles:
+    active: local
