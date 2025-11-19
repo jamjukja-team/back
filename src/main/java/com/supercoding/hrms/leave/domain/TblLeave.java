@@ -29,7 +29,7 @@ public class TblLeave {
     private String leaveEndDate; //휴가 끝 날짜
 
     @Column(name = "leave_type")
-    private String leaveType; //휴가 타입(종류),{연차, 반차, 병가}
+    private String leaveType; //휴가 타입(종류),{연차, 반차, 병가} -> AHL, BHL
 
     @Column(name = "leave_reason")
     private String leaveReason; //사유

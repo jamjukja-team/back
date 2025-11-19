@@ -41,16 +41,16 @@ public class LeaveController {
 
     // Delete – D
     @DeleteMapping("/{leaveId}")
-    public ResponseEntity<?> delete(@PathVariable Long leaveId) {
-        leaveService.delete(leaveId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Boolean> delete(@PathVariable Long leaveId) {
+        boolean result = leaveService.delete(leaveId);
+        return ResponseEntity.ok(result);
     }
 
     // Delete(List) – D(L)
     @DeleteMapping
-    public ResponseEntity<?> deleteList(@RequestBody List<Long> leaveIds) {
-        leaveService.deleteList(leaveIds);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Boolean> deleteList(@RequestParam List<Long> leaveIds) {
+        boolean result = leaveService.deleteList(leaveIds);
+        return ResponseEntity.ok(result);
     }
 
 //    SelectType(드롭다운) API

@@ -33,13 +33,23 @@ public class LeaveService {
     }
 
     // 5. Delete (단건)
-    public void delete(Long leaveId) {
-        leaveRepository.deleteById(leaveId);
+    public boolean delete(Long leaveId) {
+        try {
+            leaveRepository.deleteById(leaveId);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     // 6. Delete (다건)
-    public void deleteList(List<Long> ids) {
-        ids.forEach(leaveRepository::deleteById);
+    public boolean deleteList(List<Long> leaveIds) {
+        try {
+            leaveIds.forEach(leaveRepository::deleteById);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     // 승인 처리
