@@ -154,13 +154,13 @@ public class PayrollService {
     }
 
     //D(L) (다건 삭제)
-    public boolean deletePayrolls(List<Long> ids) {
-        if (ids == null || ids.isEmpty()) {
+    public boolean deletePayrolls(List<Long> payIds) {
+        if (payIds == null || payIds.isEmpty()) {
             return false; // 삭제할 ID가 없음
         }
 
         try {
-            payrollRepository.deleteAllById(ids);
+            payrollRepository.deleteAllById(payIds);
             return true; // 삭제 성공
         } catch (Exception e) {
             return false; // 중간에 오류 발생

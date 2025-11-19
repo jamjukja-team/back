@@ -69,8 +69,8 @@ public class PayrollController {
     //D(L) (Delete List)
     //여러 급여 이력 일괄 삭제
     @DeleteMapping
-    public ResponseEntity<Boolean> deletePayrolls (@RequestParam List < Long > ids) {
-        boolean result = payrollService.deletePayrolls(ids);
+    public ResponseEntity<Boolean> deletePayrolls (@RequestParam List < Long > payIds) {
+        boolean result = payrollService.deletePayrolls(payIds);
         return result
                 ? ResponseEntity.ok(true)
                 : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
