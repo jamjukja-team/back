@@ -1,10 +1,10 @@
-FROM gradle:8.10-jdk17 AS build
-WORKDIR /app
-COPY . .
-RUN gradle clean bootJar --no-daemon
+FROM eclipse-temurin:17-jdk
 
-FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
-COPY --from=build /app/build/libs/*.jar app.jar
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+COPY build/libs/*.jar app.jar
+
+EXPOSE 8080
+
+# Run the JAR file
+ENTRYPOINT ["sh", "-c", "sleep 10 && java -jar app.jar"]

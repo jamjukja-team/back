@@ -1,3 +1,14 @@
 spring:
-  application:
-    name: hrms
+  datasource:
+    url: jdbc:mysql://localhost:3306/hrmsdb
+    username: dev
+    password: dev123
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  h2:
+    console:
+      enabled: false
