@@ -27,6 +27,6 @@ public class DevTestController {
     // 깃 액션 체크
     @GetMapping("/dev-test/action")
     public String action() {
-        return "action ok";
+        return "우왕 성공이다.";
     }
 }
