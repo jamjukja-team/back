@@ -1,0 +1,39 @@
+package com.supercoding.hrms.emp.dto;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+
+@Getter
+public class EmployeeSaveRequestDto {
+    @Email(message = "올바른 이메일 형식을 입력해주세요.")
+    @NotBlank(message = "이메일을 입력해주세요.")
+    private String email;
+
+    @NotBlank(message = "비밀번호를 입력해주세요.")
+    private String password;
+
+    @NotBlank(message = "이름을 입력해주세요.")
+    private String empNm;
+
+    @NotBlank(message = "생년월일을 입력해주세요.")
+    private String birthDate;
+
+    @NotBlank(message = "입사년도를 입력해주세요.")
+    private String hireDate;
+
+    @NotBlank(message = "전화번호를 입력해주세요.")
+    private String phone;
+
+    @NotBlank(message = "부서를 입력해주세요.")
+    private String deptId;
+
+    @NotBlank(message = "직급을 입력해주세요.")
+    private String gradeId;
+
+    @NotBlank(message = "사진을 등록해주세요.")
+    private String photo;
+
+    @NotBlank(message = "올바른 접근이 아닙니다.")
+    private String registerId;
+}
