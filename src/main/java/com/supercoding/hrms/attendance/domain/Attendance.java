@@ -1,5 +1,6 @@
 package com.supercoding.hrms.attendance.domain;
 
+import com.supercoding.hrms.attendance.dto.response.AttendanceResponseDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -96,5 +97,17 @@ public class Attendance {
         this.endTime = endTime;
         this.isOverTime = isOverTime;
         this.updatedBy = updatedBy;
+    }
+
+    public AttendanceResponseDto toDto() {
+        AttendanceResponseDto attendanceResponseDto = new AttendanceResponseDto();
+        attendanceResponseDto.setAttendanceId(this.attendanceId);
+        attendanceResponseDto.setEmpId(this.empId);
+        attendanceResponseDto.setStartTime(this.startTime);
+        attendanceResponseDto.setEndTime(this.endTime);
+        attendanceResponseDto.setIsOverTime(this.isOverTime);
+        attendanceResponseDto.setCreatedBy(this.createdBy);
+        attendanceResponseDto.setUpdatedBy(this.updatedBy);
+        return attendanceResponseDto;
     }
 }
