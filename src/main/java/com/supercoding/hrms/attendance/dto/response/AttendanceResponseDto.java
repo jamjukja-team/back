@@ -1,5 +1,6 @@
 package com.supercoding.hrms.attendance.dto.response;
 
+import com.supercoding.hrms.attendance.domain.Attendance;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,4 +18,16 @@ public class AttendanceResponseDto {
     private Long createdBy;
     private LocalDateTime updatedAt;
     private Long updatedBy;
+
+    public AttendanceResponseDto(Attendance attendance) {
+        this.attendanceId = attendance.getAttendanceId();
+        this.empId = attendance.getEmpId();
+        this.startTime = attendance.getStartTime();
+        this.endTime = attendance.getEndTime();
+        this.isOverTime = attendance.getIsOverTime();
+        this.createdAt = attendance.getCreatedAt();
+        this.createdBy = attendance.getCreatedBy();
+        this.updatedAt = attendance.getUpdatedAt();
+        this.updatedBy = attendance.getUpdatedBy();
+    }
 }
