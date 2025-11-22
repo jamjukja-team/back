@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MailService {
+public class CommonMailService {
     private final JavaMailSender mailSender;
 
     @Value("${mail.from}")

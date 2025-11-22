@@ -1,24 +1,25 @@
 package com.supercoding.hrms.auth.controller;
 
-import com.supercoding.hrms.auth.dto.AccessTokenResponseDto;
-import com.supercoding.hrms.auth.dto.LoginParamRequestDto;
-import com.supercoding.hrms.auth.dto.LoginParamResponseDto;
+import com.supercoding.hrms.auth.dto.response.AccessTokenResponseDto;
+import com.supercoding.hrms.auth.dto.request.LoginParamRequestDto;
+import com.supercoding.hrms.auth.dto.response.LoginParamResponseDto;
+import com.supercoding.hrms.auth.dto.request.SetPasswordRequestDto;
 import com.supercoding.hrms.auth.service.AuthService;
+import com.supercoding.hrms.com.exception.CustomException;
+import com.supercoding.hrms.com.exception.CustomMessage;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/auth")
 public class AuthController {
     private final AuthService authService;
+
 
     @PostMapping("/login")
     public ResponseEntity<AccessTokenResponseDto> login(@RequestBody @Valid LoginParamRequestDto req, HttpServletResponse response) {
@@ -31,5 +32,11 @@ public class AuthController {
         response.addCookie(refreshCookie);
 
         return ResponseEntity.ok(new AccessTokenResponseDto(tokens.getAccessToken()));
+    }
+
+    @PostMapping("/set-password")
+    public ResponseEntity<CustomException> setInitialPassword(@RequestBody SetPasswordRequestDto request) {
+        authService.setInitialPassword(request);
+        return ResponseEntity.ok(new CustomException(CustomMessage.SUCCESS_PASSWORD_RESET));
     }
 }

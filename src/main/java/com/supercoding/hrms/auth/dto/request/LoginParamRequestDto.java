@@ -1,4 +1,4 @@
-package com.supercoding.hrms.auth.dto;
+package com.supercoding.hrms.auth.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

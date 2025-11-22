@@ -1,4 +1,4 @@
-package com.supercoding.hrms.auth.dto;
+package com.supercoding.hrms.auth.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

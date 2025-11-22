@@ -1,4 +1,4 @@
-package com.supercoding.hrms.emp.dto;
+package com.supercoding.hrms.emp.dto.response;
 
 import com.supercoding.hrms.emp.entity.Employee;
 import lombok.Getter;

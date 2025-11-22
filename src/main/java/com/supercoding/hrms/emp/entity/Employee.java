@@ -63,7 +63,7 @@ public class Employee {
 
     @Column(name = "account_status_cd", length = 20)
     @Builder.Default
-    private String accountStatusCd = "ENABLE";
+    private String accountStatusCd = "DISABLE";
 
     @NotNull
     @Column(nullable = false)
