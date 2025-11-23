@@ -1,0 +1,226 @@
+[
+  {
+    "payHistId": 1,
+    "empId": 1001,
+    "empName": "김희윤",
+    "deptName": "개발팀",
+    "workHour": 168,
+    "overHour": 8,
+    "workPay": 3000000,
+    "overPay": 300000,
+    "status": "지급완료",
+    "payDate": "2025-09-25",
+    "items": [
+      {
+        "payrollDetailId": 1,
+        "empId": 1001,
+        "itemCd": "A001",
+        "amount": 3000000,
+        "remark": "기본급"
+      },
+      {
+        "payrollDetailId": 2,
+        "empId": 1001,
+        "itemCd": "A002",
+        "amount": 300000,
+        "remark": "연장수당"
+      },
+      {
+        "payrollDetailId": 3,
+        "empId": 1001,
+        "itemCd": "A003",
+        "amount": 300000,
+        "remark": "식대"
+      },
+      {
+        "payrollDetailId": 4,
+        "empId": 1001,
+        "itemCd": "D001",
+        "amount": -180000,
+        "remark": "4대보험 (국민연금, 건강보험, 고용보험, 산재보험)"
+      },
+      {
+        "payrollDetailId": 5,
+        "empId": 1001,
+        "itemCd": "D002",
+        "amount": -45000,
+        "remark": "소득세"
+      },
+      {
+        "payrollDetailId": 6,
+        "empId": 1001,
+        "itemCd": "D003",
+        "amount": -4500,
+        "remark": "지방소득세"
+      }
+    ]
+  },
+  {
+    "payHistId": 2,
+    "empId": 1002,
+    "empName": "최병호",
+    "deptName": "디자인팀",
+    "workHour": 160,
+    "overHour": 0,
+    "workPay": 3000000,
+    "overPay": 0,
+    "status": "계산중",
+    "payDate": "2025-09-25",
+    "items": [
+      {
+        "payrollDetailId": 1,
+        "empId": 1001,
+        "itemCd": "A001",
+        "amount": 3000000,
+        "remark": "기본급"
+      },
+      {
+        "payrollDetailId": 2,
+        "empId": 1001,
+        "itemCd": "A002",
+        "amount": 300000,
+        "remark": "연장수당"
+      },
+      {
+        "payrollDetailId": 3,
+        "empId": 1001,
+        "itemCd": "A003",
+        "amount": 300000,
+        "remark": "식대"
+      },
+      {
+        "payrollDetailId": 4,
+        "empId": 1001,
+        "itemCd": "D001",
+        "amount": -180000,
+        "remark": "4대보험 (국민연금, 건강보험, 고용보험, 산재보험)"
+      },
+      {
+        "payrollDetailId": 5,
+        "empId": 1001,
+        "itemCd": "D002",
+        "amount": -45000,
+        "remark": "소득세"
+      },
+      {
+        "payrollDetailId": 6,
+        "empId": 1001,
+        "itemCd": "D003",
+        "amount": -4500,
+        "remark": "지방소득세"
+      }
+    ]
+  },
+  {
+    "payHistId": 3,
+    "empId": 1003,
+    "empName": "노경민",
+    "deptName": "개발팀",
+    "workHour": 170,
+    "overHour": 10,
+    "workPay": 3000000,
+    "overPay": 375000,
+    "status": "급여확정",
+    "payDate": "2025-09-25",
+    "items": [
+      {
+        "payrollDetailId": 1,
+        "empId": 1001,
+        "itemCd": "A001",
+        "amount": 3000000,
+        "remark": "기본급"
+      },
+      {
+        "payrollDetailId": 2,
+        "empId": 1001,
+        "itemCd": "A002",
+        "amount": 300000,
+        "remark": "연장수당"
+      },
+      {
+        "payrollDetailId": 3,
+        "empId": 1001,
+        "itemCd": "A003",
+        "amount": 300000,
+        "remark": "식대"
+      },
+      {
+        "payrollDetailId": 4,
+        "empId": 1001,
+        "itemCd": "D001",
+        "amount": -180000,
+        "remark": "4대보험 (국민연금, 건강보험, 고용보험, 산재보험)"
+      },
+      {
+        "payrollDetailId": 5,
+        "empId": 1001,
+        "itemCd": "D002",
+        "amount": -45000,
+        "remark": "소득세"
+      },
+      {
+        "payrollDetailId": 6,
+        "empId": 1001,
+        "itemCd": "D003",
+        "amount": -4500,
+        "remark": "지방소득세"
+      }
+    ]
+  },
+  {
+    "payHistId": 4,
+    "empId": 1004,
+    "empName": "배준성",
+    "deptName": "디자인팀",
+    "workHour": 160,
+    "overHour": 0,
+    "workPay": 3000000,
+    "overPay": 0,
+    "status": "지급완료",
+    "payDate": "2025-09-25",
+    "items": [
+      {
+        "payrollDetailId": 1,
+        "empId": 1001,
+        "itemCd": "A001",
+        "amount": 3000000,
+        "remark": "기본급"
+      },
+      {
+        "payrollDetailId": 2,
+        "empId": 1001,
+        "itemCd": "A002",
+        "amount": 300000,
+        "remark": "연장수당"
+      },
+      {
+        "payrollDetailId": 3,
+        "empId": 1001,
+        "itemCd": "A003",
+        "amount": 300000,
+        "remark": "식대"
+      },
+      {
+        "payrollDetailId": 4,
+        "empId": 1001,
+        "itemCd": "D001",
+        "amount": -180000,
+        "remark": "4대보험 (국민연금, 건강보험, 고용보험, 산재보험)"
+      },
+      {
+        "payrollDetailId": 5,
+        "empId": 1001,
+        "itemCd": "D002",
+        "amount": -45000,
+        "remark": "소득세"
+      },
+      {
+        "payrollDetailId": 6,
+        "empId": 1001,
+        "itemCd": "D003",
+        "amount": -4500,
+        "remark": "지방소득세"
+      }
+    ]
+  }
+]
