@@ -9,11 +9,15 @@ spring:
       ddl-auto: update
     show-sql: true
     defer-datasource-initialization: true
-    sql:
-      init:
-        mode: always
-        encoding: UTF-8
-        platform: mysql
+    properties:
+      hibernate:
+        format_sql: true
+
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
+      platform: mysql
 
   mail:
     host: smtp.gmail.com
@@ -24,7 +28,5 @@ spring:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
       mail.smtp.starttls.required: true
-
-mail:
-  from: ${MAIL_FROM}
-  frontend-base-url: ${FRONTEND_BASE_URL}
+    from: ${MAIL_FROM}
+    frontend-base-url: ${FRONTEND_BASE_URL}
