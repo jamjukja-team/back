@@ -8,6 +8,13 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    defer-datasource-initialization: true
+
+    sql:
+      init:
+        mode: always
+        encoding: UTF-8
+        platform: mysql
 
   h2:
     console:
@@ -24,6 +31,6 @@ spring:
       mail.smtp.starttls.required: true
 
 mail:
-  from: ${ secrets.MAIL_FROM }
-  frontend-base-url: ${ secrets.FRONTEND_BASE_URL }
+  from: ${ MAIL_FROM }
+  frontend-base-url: ${ FRONTEND_BASE_URL }
 
