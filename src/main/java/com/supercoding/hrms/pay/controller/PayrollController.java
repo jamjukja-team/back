@@ -1,5 +1,6 @@
 package com.supercoding.hrms.pay.controller;
 
+import com.supercoding.hrms.pay.domain.PayrollItem;
 import com.supercoding.hrms.pay.dto.PayrollType;
 import com.supercoding.hrms.pay.service.PayrollService;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +20,10 @@ public class PayrollController {
 
     //C (Create)
     //급여 이력 생성
+    // 한달에 한번 자동 생성
     @PostMapping
-    public ResponseEntity<PayrollType> createPayroll(@RequestBody PayrollType request) {
-        PayrollType response = payrollService.createPayroll(request);
-        return ResponseEntity.ok(response);
+    public void createPayroll(@RequestBody PayrollType request) {
+        payrollService.loadPayrollFromJson();
     }
 
     //R(L) (Read List)
@@ -39,6 +40,11 @@ public class PayrollController {
         // 특정 id를 넣어서 서비스의 getPayroll 실행
         PayrollType response = payrollService.getPayroll(id);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/itmes")
+    public ResponseEntity<List<PayrollItem>> getPayrollItems(){
+        return ResponseEntity.ok(payrollService.getPayrollItem());
     }
 
     //U (Update)

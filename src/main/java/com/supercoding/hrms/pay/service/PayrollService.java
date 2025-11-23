@@ -1,17 +1,22 @@
 package com.supercoding.hrms.pay.service;
 
-import com.supercoding.hrms.pay.domain.Payroll;
-import com.supercoding.hrms.pay.domain.PayrollDetail;
-import com.supercoding.hrms.pay.domain.PayrollStatus;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.supercoding.hrms.pay.domain.*;
 import com.supercoding.hrms.pay.dto.PayrollType;
 import com.supercoding.hrms.pay.repository.ItemNmRepository;
+import com.supercoding.hrms.pay.repository.PayRepository;
 import com.supercoding.hrms.pay.repository.PayrollDetailRepository;
 import com.supercoding.hrms.pay.repository.PayrollRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +28,45 @@ public class PayrollService {
     private final PayrollRepository payrollRepository;
     private final PayrollDetailRepository payrollDetailRepository;
     private final ItemNmRepository itemNmRepository;
+    private final PayRepository payRepository;
+
+    // 급여 json 파일 가져와서 타입 매핑을 해주기 위함
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    /**
+     * resources/payroll-data.json 파일을 읽어서 DB에 저장
+     */
+    public void loadPayrollFromJson() {
+        try {
+            // resources/payrolls.json 파일 읽기
+            InputStream inputStream = new ClassPathResource("payrolls.json").getInputStream();
+
+            // JSON → List<PayrollType> 변환
+            List<PayrollType> payrollList = objectMapper.readValue(inputStream,
+                    new TypeReference<List<PayrollType>>() {});
+
+            // DB 저장
+            for (PayrollType dto : payrollList) {
+                Payroll payroll = Payroll.builder()
+                        .empId(dto.getEmpId())
+                        .payDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")))
+                        .status(dto.getStatus())
+                        .build();
+
+                payrollRepository.save(payroll);
+
+                for (PayrollDetail detail : dto.getItems()) {
+                    payrollDetailRepository.save(detail);
+                }
+            }
+
+            log.info("JSON 급여 데이터 {}건 저장 완료", payrollList.size());
+
+        } catch (Exception e) {
+            log.error("급여 데이터 JSON 로드 실패: {}", e.getMessage(), e);
+        }
+    }
+
     //C, R, R(L), U, D, D(L) 규칙에 따라
     // 지금 R 다건으로 만들었음
 
@@ -84,14 +128,20 @@ public class PayrollService {
         Payroll payroll = payrollRepository.findById(histId)
                 .orElseThrow(() -> new RuntimeException("해당 급여이력이 없습니다."));
 
+        Integer workPay = payRepository.findById(payroll.getEmpId())
+                .map(Pay::getWorkPay)
+                .orElse(0);
+
         // 내가 반환하고자 하는 타입(PayrollType)으로 payroll을 맵핑해줌
         return new PayrollType(
                 histId,
                 payroll.getEmpId(),
                 "김직원",
                 "개발팀",
-                0,
-                0,
+                160,
+                10,
+                calcPay(160, workPay, false),
+                calcPay(10, 0, true),
                 PayrollStatus.from(payroll.getStatus()).getDisplayName(),
                 payroll.getPayDate(),
                 getDetails(payroll.getEmpId())
@@ -108,7 +158,9 @@ public class PayrollService {
                         "김직원",
                         "개발팀",
                         160,
-                        0,
+                        10,
+                        calcPay(160, 100, false),
+                        calcPay(10, 0, true),
                         PayrollStatus.from(p.getStatus()).getDisplayName(),
                         "250926",
                         getDetails(p.getEmpId())
@@ -165,6 +217,18 @@ public class PayrollService {
         } catch (Exception e) {
             return false; // 중간에 오류 발생
         }
+    }
+
+    public Integer calcPay(int time, int pay, boolean isOver){
+        int workPay = time * pay;
+        if(isOver){
+            workPay = (int)Math.round(time * ((double) workPay /209) * 1.5);
+        }
+        return workPay;
+    }
+
+    public List<PayrollItem> getPayrollItem(){
+        return itemNmRepository.findAll();
     }
 
 

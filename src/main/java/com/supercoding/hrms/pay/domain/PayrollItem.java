@@ -17,7 +17,4 @@ public class PayrollItem {
 
     @Column(name = "nm")
     private String nm;
-
-    @Column(name = "remark")
-    private String remark;
 }
