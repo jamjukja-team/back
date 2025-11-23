@@ -9,6 +9,7 @@ import com.supercoding.hrms.com.repository.CommonDetailRepository;
 import com.supercoding.hrms.com.repository.DepartmentRepository;
 import com.supercoding.hrms.com.repository.GradeRepository;
 import com.supercoding.hrms.com.service.CommonMailService;
+import com.supercoding.hrms.com.service.CommonUploadService;
 import com.supercoding.hrms.emp.dto.request.EmployeeSaveRequestDto;
 import com.supercoding.hrms.emp.dto.request.EmployeeSearchRequestDto;
 import com.supercoding.hrms.emp.dto.response.*;
@@ -25,6 +26,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +44,11 @@ public class EmpService {
     private final PasswordEncoder passwordEncoder;
     private final CommonMailService commonMailService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final CommonUploadService commonUploadService;
 
 
     @Transactional
-    public EmployeeSaveResponseDto saveEmployee(EmployeeSaveRequestDto req) {
+    public EmployeeSaveResponseDto saveEmployee(EmployeeSaveRequestDto req, MultipartFile photo) {
 
         if(employeeRepository.existsByEmail(req.getEmail())) {
             throw new CustomException(CustomMessage.FAIL_EMAIL_EXISTS);
@@ -67,7 +70,7 @@ public class EmpService {
                 .birthDate(req.getBirthDate())
                 .hireDate(req.getHireDate())
                 .phone(req.getPhone())
-                .photo(req.getPhoto())
+                .photo(commonUploadService.uploadFile(photo, "employee/photos"))
                 .department(dept)
                 .grade(grade)
                 .inEmpId(req.getRegisterId())

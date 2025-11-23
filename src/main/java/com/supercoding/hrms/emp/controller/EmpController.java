@@ -14,8 +14,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,9 +25,9 @@ import org.springframework.web.bind.annotation.*;
 public class EmpController {
     private final EmpService empService;
 
-    @PostMapping("/employees")
-    public ResponseEntity<EmployeeSaveResponseDto> saveEmployee(@RequestBody @Valid EmployeeSaveRequestDto req) {
-        return ResponseEntity.ok(empService.saveEmployee(req));
+    @PostMapping(value = "/employees", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<EmployeeSaveResponseDto> saveEmployee(@RequestPart("data") @Valid EmployeeSaveRequestDto req, @RequestPart(value = "file", required = false) MultipartFile file) {
+        return ResponseEntity.ok(empService.saveEmployee(req, file));
     }
 
     @PostMapping("/employees/search")
