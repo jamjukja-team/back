@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PayrollSchedule {
 
-    private PayrollService payrollService;
+    private final PayrollService payrollService;
 
-    @Scheduled(cron = "* * * * 1 *")
-    public void test(){
-        PayrollType payrollType = new PayrollType();
-        payrollService.loadPayrollFromJson();
-    }
+//    @Scheduled(cron = "* * * * * *")
+//    public void test(){
+//        PayrollType payrollType = new PayrollType();
+//        payrollService.loadPayrollFromJson();
+//    }
 }
