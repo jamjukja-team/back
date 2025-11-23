@@ -47,7 +47,7 @@ jobs:
           cache-to: type=gha,mode=max
 
   deploy:
-    needs: springboot-hrms-cd       # 앞에서 도커 이미지 빌드/푸시하는 job 이름에 맞춰 수정
+    needs: springboot-hrms-cd
 
     runs-on: ubuntu-24.04
 
@@ -61,11 +61,9 @@ jobs:
           script: |
             docker stop springboot-hrms || true
             docker rm springboot-hrms || true
-  
-            # 최신 이미지 pull
+
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/springboot-hrms:latest-linux
-  
-            # 새 컨테이너 실행
+
             docker run -d \
               --name springboot-hrms \
               -p 8080:8080 \
@@ -73,4 +71,3 @@ jobs:
               -e SPRING_DATASOURCE_USERNAME=${{ secrets.RDS_USERNAME }} \
               -e SPRING_DATASOURCE_PASSWORD=${{ secrets.RDS_PASSWORD }} \
               ${{ secrets.DOCKER_HUB_USERNAME }}/springboot-hrms:latest-linux
-
