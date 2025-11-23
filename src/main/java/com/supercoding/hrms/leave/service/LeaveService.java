@@ -52,17 +52,11 @@ public class LeaveService {
         }
     }
 
-    // 승인 처리
-    public void approve(Long leaveId) {
-        TblLeave leave = read(leaveId);
-        leave.setLeaveStatus("APPLY"); // 승인 코드
-        leaveRepository.save(leave);
-    }
 
-    // 반려 처리
-    public void reject(Long leaveId, String reason) {
+    // 승인 반려 처리
+    public void updateStatus(Long leaveId, String reason, String status) {
         TblLeave leave = read(leaveId);
-        leave.setLeaveStatus("REJECT");
+        leave.setLeaveStatus(status);
         leave.setRejectReason(reason);
         leaveRepository.save(leave);
     }

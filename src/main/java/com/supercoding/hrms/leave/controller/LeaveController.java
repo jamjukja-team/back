@@ -6,6 +6,7 @@ import com.supercoding.hrms.leave.dto.SelectType;
 import com.supercoding.hrms.leave.repository.LeaveCommonCodeRepository;
 import com.supercoding.hrms.leave.service.LeaveService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Parameter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -76,19 +77,14 @@ public class LeaveController {
     }
     // 여기 드롭다운에서 leave_status 관리를 어떻게 해야 하는건지..?
 
-    // 승인
-    @PostMapping("/{leaveId}/approve")
-    public ResponseEntity<?> approve(@PathVariable Long leaveId) {
-        leaveService.approve(leaveId);
-        return ResponseEntity.ok("승인 완료");
-    }
-
-    @PostMapping("/{leaveId}/reject")
-    public ResponseEntity<?> reject(
+    @PutMapping("/{leaveId}")
+    public ResponseEntity<?> updateStatus(
             @PathVariable Long leaveId,
-            @RequestBody LeaveType leaveType) {
-
-        leaveService.reject(leaveId, leaveType.getLeaveInfo().getRejectReason());
-        return ResponseEntity.ok("반려 완료");
+            @RequestBody String reason,
+            @RequestParam String status // 프론트에서 파라미터로 APPLY 혹은 REJECT 넘겨줘야 함.
+    ) {
+        leaveService.updateStatus(leaveId, reason, status);
+        return ResponseEntity.ok("상태 업데이트 완료");
     }
+
 }
