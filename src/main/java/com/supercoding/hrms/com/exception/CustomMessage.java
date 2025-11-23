@@ -17,7 +17,7 @@ public enum CustomMessage {
     FAIL_UNKNOWN(HttpStatus.BAD_REQUEST, "회원가입 실패: 잘못된 요청입니다."),
     FAIL_WRONG_EMAIL(HttpStatus.UNAUTHORIZED, "로그인 실패: 등록되지 않은 사원입니다."),
     FAIL_WRONG_PASSWORD(HttpStatus.UNAUTHORIZED, "로그인 실패: 비밀번호가 올바르지 않습니다."),
-    FAIL_INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 리프레시 토큰입니다."),
+    FAIL_REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "리프레시 토큰이 만료되었습니다."),
     FAIL_USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "요청하신 사용자가 존재하지 않습니다."),
     FAIL_REFRESH_TOKEN_MISMATCH(HttpStatus.UNAUTHORIZED, "서버에 저장된 리프레시 토큰과 다릅니다."),
     FAIL_ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "액세스 토큰이 만료되었습니다."),

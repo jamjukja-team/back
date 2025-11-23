@@ -63,7 +63,7 @@ public class Employee {
 
     @Column(name = "account_status_cd", length = 20)
     @Builder.Default
-    private String accountStatusCd = "DISABLE";
+    private String accountStatusCd = "DORMANT";
 
     @NotNull
     @Column(nullable = false)
@@ -71,7 +71,7 @@ public class Employee {
 
     @Column(name = "emp_status_cd", length = 20)
     @Builder.Default
-    private String empStatusCd = "EMP_WORKING";
+    private String empStatusCd = "ACTIVE";
 
     @CreationTimestamp
     @Column(name= "create_at", updatable = false)

@@ -19,7 +19,7 @@ public class RefreshToken {
     private Long empId;
     @Column(name = "refresh_token", nullable = false, length = 500)
     private String refreshToken;
-    @Column(nullable = false, length = 1, columnDefinition = "VARCHAR(1) CHECK (revoked IN ('Y','N')) DEFAULT 'Y'")
+    @Column(nullable = false, length = 1, columnDefinition = "VARCHAR(1) CHECK (revoked IN ('Y','N')) DEFAULT 'N'")
     @Builder.Default
-    private String revoked = "Y";
+    private String revoked = "N";
 }

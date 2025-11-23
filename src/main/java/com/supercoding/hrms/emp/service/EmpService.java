@@ -9,17 +9,14 @@ import com.supercoding.hrms.com.repository.CommonDetailRepository;
 import com.supercoding.hrms.com.repository.DepartmentRepository;
 import com.supercoding.hrms.com.repository.GradeRepository;
 import com.supercoding.hrms.com.service.CommonMailService;
-import com.supercoding.hrms.com.service.CommonMetadataService;
 import com.supercoding.hrms.emp.dto.request.EmployeeSaveRequestDto;
 import com.supercoding.hrms.emp.dto.request.EmployeeSearchRequestDto;
-import com.supercoding.hrms.emp.dto.response.EmployeeDetailResponseDto;
-import com.supercoding.hrms.emp.dto.response.EmployeeMetaDataResponseDto;
-import com.supercoding.hrms.emp.dto.response.EmployeeSaveResponseDto;
-import com.supercoding.hrms.emp.dto.response.EmployeeSearchResponseDto;
+import com.supercoding.hrms.emp.dto.response.*;
 import com.supercoding.hrms.emp.entity.EmpNoSequence;
 import com.supercoding.hrms.emp.entity.Employee;
 import com.supercoding.hrms.emp.repository.EmpNoSequenceRepository;
 import com.supercoding.hrms.emp.repository.EmployeeRepository;
+import com.supercoding.hrms.security.util.JwtTokenProvider;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -44,7 +41,8 @@ public class EmpService {
     private final EmpNoSequenceRepository empNoSequenceRepository;
     private final PasswordEncoder passwordEncoder;
     private final CommonMailService commonMailService;
-    private final CommonMetadataService commonMetadataService;
+    private final JwtTokenProvider jwtTokenProvider;
+
 
     @Transactional
     public EmployeeSaveResponseDto saveEmployee(EmployeeSaveRequestDto req) {
@@ -211,7 +209,7 @@ public class EmpService {
                 .orElseThrow(() ->  new CustomException(CustomMessage.FAIL_USER_NOT_FOUND));
 
         CommonDetail disableCode = (CommonDetail) commonDetailRepository
-                .findByGroup_ComGroupCdAndComCd("ACCOUNT_STATUS", "DISABLE")
+                .findByGroup_ComGroupCdAndComCd("ACCOUNT_STATUS", "LOCK")
                 .orElseThrow(() -> new CustomException(CustomMessage.FAIL_ACCOUNT_STATUS_CODE_NOT_FOUND));
 
 
@@ -225,7 +223,7 @@ public class EmpService {
                 .orElseThrow(() ->  new CustomException(CustomMessage.FAIL_USER_NOT_FOUND));
 
         CommonDetail disableCode = (CommonDetail) commonDetailRepository
-                .findByGroup_ComGroupCdAndComCd("ACCOUNT_STATUS", "ENABLE")
+                .findByGroup_ComGroupCdAndComCd("ACCOUNT_STATUS", "NORMAL")
                 .orElseThrow(() -> new CustomException(CustomMessage.FAIL_ACCOUNT_STATUS_CODE_NOT_FOUND));
 
 

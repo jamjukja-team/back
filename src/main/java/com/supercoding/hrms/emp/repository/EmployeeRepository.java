@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSpecificationExecutor<Employee> {
     boolean existsByEmail(String email);
@@ -23,5 +24,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSp
     @EntityGraph(attributePaths = {"department", "grade"})
     Page<Employee> findAll(Specification<Employee> spec, Pageable pageable);
 
-    Optional<Object> findByEmail(String email);
+    Optional<Employee> findByEmail(String email);
+
 }

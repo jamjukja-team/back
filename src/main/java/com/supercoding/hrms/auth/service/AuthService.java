@@ -3,12 +3,11 @@ package com.supercoding.hrms.auth.service;
 import com.supercoding.hrms.auth.dto.request.LoginParamRequestDto;
 import com.supercoding.hrms.auth.dto.response.LoginParamResponseDto;
 import com.supercoding.hrms.auth.dto.request.SetPasswordRequestDto;
-import com.supercoding.hrms.auth.entity.Account;
 import com.supercoding.hrms.auth.entity.RefreshToken;
-import com.supercoding.hrms.auth.repository.AccountRepository;
 import com.supercoding.hrms.auth.repository.RefreshTokenRepository;
 import com.supercoding.hrms.com.exception.CustomException;
 import com.supercoding.hrms.com.exception.CustomMessage;
+import com.supercoding.hrms.emp.dto.response.RefreshResponseDto;
 import com.supercoding.hrms.emp.entity.Employee;
 import com.supercoding.hrms.emp.repository.EmployeeRepository;
 import com.supercoding.hrms.security.util.JwtTokenProvider;
@@ -21,58 +20,75 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final AccountRepository accountRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final EmployeeRepository employeeRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public LoginParamResponseDto login(LoginParamRequestDto req) {
-        Account account = accountRepository.findByEmail(req.getEmail());
+    public LoginParamResponseDto login(LoginParamRequestDto request) {
+        Employee employee = employeeRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new CustomException(CustomMessage.FAIL_EMAIL_NOT_FOUND));
 
-        if(account == null) {
+        if(employee == null) {
             throw new CustomException(CustomMessage.FAIL_WRONG_EMAIL);
         }
 
         //비밀번호 검증
-        verifyPassword(req.getPassword(), account.getPassword());
+        verifyPassword(request.getPassword(), employee.getPassword());
         
-        String accessToken = jwtTokenProvider.generateAccessToken(String.valueOf(account.getEmpId()));
-        String refreshToken = jwtTokenProvider.generateRefreshToken(String.valueOf(account.getEmpId()));
+        String accessToken = jwtTokenProvider.generateAccessToken(employee.getEmail());
+        String refreshToken = jwtTokenProvider.generateRefreshToken(employee.getEmail());
 
-        refreshTokenRepository.save(RefreshToken.builder().empId(account.getEmpId()).refreshToken(refreshToken).build());
+        //기존 refresh 토큰을 N으로 변경시킨다.
+        refreshTokenRepository.revokeAllByEmpId(employee.getEmpId());
+
+        //새로운 refresh 토큰 생성
+        refreshTokenRepository.save(RefreshToken.builder().empId(employee.getEmpId()).refreshToken(refreshToken).build());
 
         return new LoginParamResponseDto(accessToken, refreshToken);
     }
 
     @Transactional
     public void setInitialPassword(SetPasswordRequestDto request) {
-        Employee employee = (Employee) employeeRepository.findByEmail(request.getEmail())
+        Employee employee = employeeRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new CustomException(CustomMessage.FAIL_EMAIL_NOT_FOUND));
-
-        System.out.println(request.getNewPassword());
         // 비밀번호 인코딩 후 저장
         employee.setPassword(passwordEncoder.encode(request.getNewPassword()));
 
         // 계정 활성화 플래그 on (예시)
-        employee.setAccountStatusCd("ENABLE");
+        employee.setAccountStatusCd("NORMAL");
     }
 
     private void verifyPassword(String reqPassword, String accPassword) {
-        System.out.println("=========");
-        System.out.println(passwordEncoder.matches(reqPassword, "$2a$10$TuZ3/ORqJ5SbG6HevBW0SeTLxwQSRtj2kCbj0cWwDVkGPDLbrkgzm"));
-        System.out.println(new BCryptPasswordEncoder().encode("Test1234!"));
-
-        String encoded = passwordEncoder.encode(reqPassword);
-        System.out.println("ENCODED PASSWORD = [" + encoded + "]");
-
-
-
-        System.out.println("=========");
         if(!passwordEncoder.matches(reqPassword, accPassword)) {
             throw new CustomException(CustomMessage.FAIL_WRONG_PASSWORD);
         }
+    }
+
+    @Transactional
+    public RefreshResponseDto getToken(String refreshToken) {
+        if(jwtTokenProvider.validateToken(refreshToken, "REFRESH")) {
+            String email = jwtTokenProvider.getEmailFromToken(refreshToken);
+
+            return new RefreshResponseDto(jwtTokenProvider.generateAccessToken(email), null);
+        }
+        throw new CustomException(CustomMessage.FAIL_TOKEN_INVALID);
+    }
+
+    @Transactional
+    public void logout(String accessToken) {
+
+        String email = jwtTokenProvider.getEmailFromToken(accessToken.replace("Bearer ", ""));
+
+        Employee employee = employeeRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(CustomMessage.FAIL_EMAIL_NOT_FOUND));
+
+        if(employee == null) {
+            throw new CustomException(CustomMessage.FAIL_WRONG_EMAIL);
+        }
+
+        refreshTokenRepository.revokeAllByEmpId(employee.getEmpId());
 
     }
 }

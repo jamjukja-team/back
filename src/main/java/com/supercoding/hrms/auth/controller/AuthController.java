@@ -7,7 +7,9 @@ import com.supercoding.hrms.auth.dto.request.SetPasswordRequestDto;
 import com.supercoding.hrms.auth.service.AuthService;
 import com.supercoding.hrms.com.exception.CustomException;
 import com.supercoding.hrms.com.exception.CustomMessage;
+import com.supercoding.hrms.emp.dto.response.RefreshResponseDto;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,4 +41,38 @@ public class AuthController {
         authService.setInitialPassword(request);
         return ResponseEntity.ok(new CustomException(CustomMessage.SUCCESS_PASSWORD_RESET));
     }
+
+    @PostMapping("/refresh")
+    public RefreshResponseDto refresh(HttpServletRequest request) {
+        String refreshToken = null;
+        if(request.getCookies() != null) {
+            for(Cookie cookie : request.getCookies()) {
+                if(cookie.getName().equals("refreshToken")) {
+                    refreshToken = cookie.getValue();
+                }
+            }
+        }
+
+        if(refreshToken == null) {
+            throw new CustomException(CustomMessage.FAIL_TOKEN_INVALID);
+        }
+
+        return authService.getToken(refreshToken);
+    }
+
+    @PostMapping("/logout")
+    public CustomException logout(@RequestHeader("Authorization") String accessToken, HttpServletResponse response) {
+        authService.logout(accessToken);
+
+        // 쿠키 삭제
+        Cookie refreshCookie = new Cookie("refreshToken", null);
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setMaxAge(0);
+        refreshCookie.setPath("/");
+        response.addCookie(refreshCookie);
+
+        return new CustomException(CustomMessage.SUCCESS_LOGOUT);
+    }
+
+
 }

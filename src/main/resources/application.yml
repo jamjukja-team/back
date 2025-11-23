@@ -16,14 +16,14 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: rudals0326@gmail.com
-    password:
+    username: ${{ secrets.MAIL_USERNAME }}
+    password: ${{ secrets.MAIL_PASSWORD }}
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
       mail.smtp.starttls.required: true
 
 mail:
-  from: "HRMS Admin <rudals0326@gmail.com>"
-  frontend-base-url: "http://localhost:5173"
+  from: ${{ secrets.MAIL_FROM }}
+  frontend-base-url: ${{ secrets.FRONTEND_BASE_URL }}
 
