@@ -48,7 +48,6 @@ jobs:
 
   deploy:
     needs: springboot-hrms-cd
-
     runs-on: ubuntu-24.04
 
     steps:
@@ -70,4 +69,8 @@ jobs:
               -e SPRING_DATASOURCE_URL=jdbc:mysql://${{ secrets.RDS_ENDPOINT }}:3306/hrmsdb \
               -e SPRING_DATASOURCE_USERNAME=${{ secrets.RDS_USERNAME }} \
               -e SPRING_DATASOURCE_PASSWORD=${{ secrets.RDS_PASSWORD }} \
+              -e MAIL_USERNAME="${{ secrets.MAIL_USERNAME }}" \
+              -e MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}" \
+              -e MAIL_FROM="${{ secrets.MAIL_FROM }}" \
+              -e FRONTEND_BASE_URL="${{ secrets.FRONTEND_BASE_URL }}" \
               ${{ secrets.DOCKER_HUB_USERNAME }}/springboot-hrms:latest-linux
