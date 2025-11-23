@@ -14,9 +14,9 @@ public class PayrollSchedule {
 
     private final PayrollService payrollService;
 
-    @Scheduled(cron = "* * * * * *")
-    public void test(){
-        PayrollType payrollType = new PayrollType();
-        payrollService.loadPayrollFromJson();
-    }
+//    @Scheduled(cron = "* * * * * *")
+//    public void test(){
+//        PayrollType payrollType = new PayrollType();
+//        payrollService.loadPayrollFromJson();
+//    }
 }
