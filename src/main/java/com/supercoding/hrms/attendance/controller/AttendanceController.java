@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/hr/attendances")
+@RequestMapping("api/attendances")
 public class AttendanceController {
     private final AttendanceService attendanceService;
 
@@ -24,7 +24,7 @@ public class AttendanceController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AttendanceResponseDto>> getAll(@RequestBody ReadAttendanceRequestDto request) {
+    public ResponseEntity<List<AttendanceResponseDto>> getAll(@ModelAttribute ReadAttendanceRequestDto request) {
         List<AttendanceResponseDto> responses = attendanceService.findAll(request);
         return ResponseEntity.ok(responses);
     }

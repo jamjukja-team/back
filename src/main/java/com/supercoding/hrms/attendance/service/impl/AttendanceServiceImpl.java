@@ -1,6 +1,7 @@
 package com.supercoding.hrms.attendance.service.impl;
 
 import com.supercoding.hrms.attendance.domain.Attendance;
+import com.supercoding.hrms.attendance.domain.Workhour;
 import com.supercoding.hrms.attendance.dto.request.create.CreateAttendanceRequestDto;
 import com.supercoding.hrms.attendance.dto.request.read.ReadAttendanceRequestDto;
 import com.supercoding.hrms.attendance.dto.request.update.GetOffAttendanceRequestDto;
@@ -8,10 +9,12 @@ import com.supercoding.hrms.attendance.dto.request.update.UpdateAttendanceReques
 import com.supercoding.hrms.attendance.dto.response.AttendanceResponseDto;
 import com.supercoding.hrms.attendance.repository.AttendanceRepository;
 import com.supercoding.hrms.attendance.service.AttendanceService;
+import com.supercoding.hrms.attendance.repository.WorkhourRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,13 +24,17 @@ import java.util.stream.Collectors;
 public class AttendanceServiceImpl implements AttendanceService {
 
     private final AttendanceRepository attendanceRepository;
+    private final WorkhourRepository workhourRepository;
+
 
     @Override
     @Transactional
     public AttendanceResponseDto create(CreateAttendanceRequestDto request) {
         Attendance attendance = request.of();
-        attendanceRepository.save(attendance);
-        return new AttendanceResponseDto(attendance);
+        Attendance saved = attendanceRepository.save(attendance);
+        Workhour workhour = new Workhour(request.getEmpId(), saved.getAttendanceId());
+        workhourRepository.save(workhour);
+        return new AttendanceResponseDto(saved);
     }
 
     @Override
@@ -56,7 +63,21 @@ public class AttendanceServiceImpl implements AttendanceService {
                 // 익셉션 처리
         );
 
+        Workhour workhour = workhourRepository.findByAttendanceId(attendance.getAttendanceId());
+
+        if (workhour == null) {
+            // 익셉션 처리
+        }
+
         attendance.getOff(request.getEndTime(), request.getUpdateBy());
+
+        Long between = Duration.between(attendance.getStartTime(), attendance.getEndTime()).toMinutes();
+
+        if (between > 60 * 9) {
+            workhour.setOvertimeMinute(between);
+        } else {
+            workhour.setMinute(between);
+        }
     }
 
     @Override
@@ -70,6 +91,18 @@ public class AttendanceServiceImpl implements AttendanceService {
                 request.getEndTime(),
                 request.getUpdatedBy()
         );
+
+
+        Workhour workhour = workhourRepository.findByAttendanceId(attendance.getAttendanceId());
+
+        Long between = Duration.between(attendance.getStartTime(), attendance.getEndTime()).toMinutes();
+
+        if (between > 60 * 9) {
+            workhour.setOvertimeMinute(between);
+        } else {
+            workhour.setMinute(between);
+        }
+
     }
 
     @Override
@@ -77,16 +110,22 @@ public class AttendanceServiceImpl implements AttendanceService {
     public void delete(Collection<Long> ids) {
         List<Long> existingIds = attendanceRepository.findExistingIds(ids);
         Set<Long> existingIdSet = new HashSet<>(existingIds);
-
         Map<Long, Boolean> collect = ids.stream()
                 .collect(Collectors.toMap(
                         id -> id,
                         existingIdSet::contains
                 ));
-
-        if (collect.containsValue(false)) {
+        List<Workhour> workhours = workhourRepository.findAllByAttendanceIds(existingIds);
+        Set<Long> workhourIds = workhours.stream().map(Workhour::getAttendanceId).collect(Collectors.toSet());
+        Map<Long, Boolean> workhourCollects = workhourIds.stream()
+                .collect(Collectors.toMap(
+                        id -> id,
+                        workhourIds::contains
+                ));
+        if (collect.containsValue(false) || workhourCollects.containsValue(false) || workhourCollects.size() != collect.size()) {
             // 익셉션 처리
         }
+        workhourRepository.deleteByIds(workhourIds);
         attendanceRepository.deleteByIds(ids);
     }
 }
