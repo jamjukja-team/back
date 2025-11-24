@@ -2,9 +2,13 @@ package com.supercoding.hrms.emp.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 public class EmployeeDetailResponseDto {
     private String photo;
     private Long empId;

@@ -9,6 +9,7 @@ import com.supercoding.hrms.com.repository.CommonDetailRepository;
 import com.supercoding.hrms.com.repository.DepartmentRepository;
 import com.supercoding.hrms.com.repository.GradeRepository;
 import com.supercoding.hrms.com.service.CommonMailService;
+import com.supercoding.hrms.com.service.CommonMetadataService;
 import com.supercoding.hrms.com.service.CommonUploadService;
 import com.supercoding.hrms.emp.dto.request.EmployeeSaveRequestDto;
 import com.supercoding.hrms.emp.dto.request.EmployeeSearchRequestDto;
@@ -17,7 +18,6 @@ import com.supercoding.hrms.emp.entity.EmpNoSequence;
 import com.supercoding.hrms.emp.entity.Employee;
 import com.supercoding.hrms.emp.repository.EmpNoSequenceRepository;
 import com.supercoding.hrms.emp.repository.EmployeeRepository;
-import com.supercoding.hrms.security.util.JwtTokenProvider;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -43,8 +43,8 @@ public class EmpService {
     private final EmpNoSequenceRepository empNoSequenceRepository;
     private final PasswordEncoder passwordEncoder;
     private final CommonMailService commonMailService;
-    private final JwtTokenProvider jwtTokenProvider;
     private final CommonUploadService commonUploadService;
+    private final CommonMetadataService commonMetadataService;
 
 
     @Transactional
@@ -231,5 +231,27 @@ public class EmpService {
 
 
         employee.setAccountStatusCd(disableCode.getComCd());
+    }
+
+    public EmployeeMetaDataResponseDto getEmployeeMetadata(Long empId) {
+        Employee employee = employeeRepository.findById(empId).orElseThrow(() -> new CustomException(CustomMessage.FAIL_USER_NOT_FOUND));
+
+        EmployeeDetailResponseDto employeeDetailResponseDto = new EmployeeDetailResponseDto(
+                employee.getPhoto() ,
+                employee.getEmpId() ,
+                employee.getEmpNo() ,
+                employee.getDepartment().getDeptId() ,
+                employee.getDepartment().getDeptNm() ,
+                employee.getGrade().getGradeId() ,
+                employee.getGrade().getGradeNm() ,
+                employee.getEmpNm() ,
+                employee.getHireDate() ,
+                employee.getPhone() ,
+                employee.getEmail() ,
+                employee.getAccountStatusCd() ,
+                employee.getEmpStatusCd()
+        );
+
+        return new EmployeeMetaDataResponseDto(commonMetadataService.getDepartments(), commonMetadataService.getGrades(), employeeDetailResponseDto);
     }
 }

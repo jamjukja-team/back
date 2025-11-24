@@ -15,7 +15,7 @@ public class JwtTokenProvider {
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public String generateAccessToken(String email) {
-        long expiration_30m = 1000L * 60 * 60;
+        long expiration_30m = 1000L * 30;//1000L * 60 * 10;
         return Jwts.builder()
                 .setSubject(email)
                 .claim("token_type", "ACCESS")
@@ -26,28 +26,28 @@ public class JwtTokenProvider {
     }
 
     public String generateRefreshToken(String email) {
-        long expiration_30m = 1000L * 60 * 60 * 24 * 7;
+        long expiration_7d = 1000L * 60; //1000L * 60 * 30;
         return Jwts.builder()
                 .setSubject(email)
                 .claim("token_type", "REFRESH")
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration_30m))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration_7d))
                 .signWith(key)
                 .compact();
     }
 
-    public boolean validateToken(String token, String type) {
+    public boolean validateToken(String token, String expectedType) {
         try {
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
-                    .parseClaimsJws(token)   // 여기서 서명 검증 + 만료 검증됨
+                    .parseClaimsJws(token)
                     .getBody();
 
-            //== 토큰 타입 검증 ==//
             String tokenType = claims.get("token_type", String.class);
 
-            if (!type.equals(tokenType)) {
+            // 타입 검증
+            if (!expectedType.equals(tokenType)) {
                 throw new CustomException(CustomMessage.FAIL_TOKEN_INVALID);
             }
 
@@ -55,40 +55,48 @@ public class JwtTokenProvider {
 
         } catch (ExpiredJwtException e) {
 
-            // 만료된 토큰 Claims 는 여기서 꺼낼 수 있음
             Claims claims = e.getClaims();
             String tokenType = claims.get("token_type", String.class);
-
-            if ("ACCESS".equals(tokenType)) {
-                throw new CustomException(CustomMessage.FAIL_ACCESS_TOKEN_EXPIRED);
-            }
 
             if ("REFRESH".equals(tokenType)) {
                 throw new CustomException(CustomMessage.FAIL_REFRESH_TOKEN_EXPIRED);
             }
-
-            // 타입조차 없다면 그냥 invalid
-            throw new CustomException(CustomMessage.FAIL_TOKEN_INVALID);
-
-        } catch (SignatureException e) {
-            // 서명 위조 (key 다름 or 변조됨)
-            throw new CustomException(CustomMessage.FAIL_TOKEN_INVALID);
-
-        } catch (MalformedJwtException e) {
-            // 형식이 이상함
-            throw new CustomException(CustomMessage.FAIL_TOKEN_INVALID);
-
-        } catch (IllegalArgumentException e) {
-            // null, empty 등
             throw new CustomException(CustomMessage.FAIL_TOKEN_INVALID);
 
         } catch (Exception e) {
-            // 기타 예외
             throw new CustomException(CustomMessage.FAIL_TOKEN_INVALID);
         }
     }
 
     public String getEmailFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public String getEmailFromExpiredToken(String token) {
+        try {
+            // 만료 여부와 상관없이 signature 체크 + claims 파싱을 시도
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)  // 여기서 signature + expiration 검사
+                    .getBody()
+                    .getSubject();
+
+        } catch (ExpiredJwtException ex) {
+            // 서명은 맞고, 만료된 경우만 여기로 들어온다.
+            return ex.getClaims().getSubject();
+
+        } catch (SignatureException ex) {
+            // 서명 불일치 → 위조된 토큰
+            throw new CustomException(CustomMessage.FAIL_ACCESS_TOKEN_INVALID);
+
+        } catch (MalformedJwtException ex) {
+            // 형식 자체가 이상함
+            throw new CustomException(CustomMessage.FAIL_ACCESS_TOKEN_INVALID);
+
+        } catch (Exception ex) {
+            // 기타 모든 오류
+            throw new CustomException(CustomMessage.FAIL_ACCESS_TOKEN_INVALID);
+        }
     }
 }
