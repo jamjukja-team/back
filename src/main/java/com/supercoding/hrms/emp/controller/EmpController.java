@@ -33,6 +33,12 @@ public class EmpController {
         return ResponseEntity.ok(empService.searchEmployees(request, pageable));
     }
 
+    @GetMapping("/employees/{empId}/metadata")
+    public EmployeeMetaDataResponseDto getEmployeeMetadata(@PathVariable Long empId) {
+
+        return empService.getEmployeeMetadata(empId);
+    }
+
     @GetMapping("/employees/{empId}")
     public EmployeeDetailResponseDto getEmployeeByAdmin(@PathVariable Long empId) {
         return empService.getEmployeeByAdmin(empId);
