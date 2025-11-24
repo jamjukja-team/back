@@ -33,13 +33,13 @@ public class AuthController {
         refreshCookie.setMaxAge(7 * 24 * 60 * 60);//7일
         response.addCookie(refreshCookie);
 
-        return ResponseEntity.ok(new AccessTokenResponseDto(tokens.getAccessToken()));
+        return ResponseEntity.ok(new AccessTokenResponseDto(tokens.getAccessToken(), tokens.getRoleCd()));
     }
 
     @PostMapping("/set-password")
-    public ResponseEntity<CustomException> setInitialPassword(@RequestBody SetPasswordRequestDto request) {
+    public ResponseEntity<String> setInitialPassword(@RequestBody SetPasswordRequestDto request) {
         authService.setInitialPassword(request);
-        return ResponseEntity.ok(new CustomException(CustomMessage.SUCCESS_PASSWORD_RESET));
+        return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
     }
 
     @PostMapping("/refresh")
@@ -61,7 +61,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public CustomException logout(@RequestHeader("Authorization") String accessToken, HttpServletResponse response) {
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String accessToken, HttpServletResponse response) {
         authService.logout(accessToken);
 
         // 쿠키 삭제
@@ -71,7 +71,7 @@ public class AuthController {
         refreshCookie.setPath("/");
         response.addCookie(refreshCookie);
 
-        return new CustomException(CustomMessage.SUCCESS_LOGOUT);
+        return ResponseEntity.ok("로그아웃이 성공적으로 완료되었습니다.");
     }
 
 

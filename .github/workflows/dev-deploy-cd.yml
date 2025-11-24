@@ -66,6 +66,7 @@ jobs:
             docker run -d \
               --name springboot-hrms \
               -p 8080:8080 \
+              -e SPRING_PROFILES_ACTIVE=dev \
               -e SPRING_DATASOURCE_URL=jdbc:mysql://${{ secrets.RDS_ENDPOINT }}:3306/hrmsdb \
               -e SPRING_DATASOURCE_USERNAME=${{ secrets.RDS_USERNAME }} \
               -e SPRING_DATASOURCE_PASSWORD=${{ secrets.RDS_PASSWORD }} \
@@ -73,4 +74,6 @@ jobs:
               -e MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}" \
               -e MAIL_FROM="${{ secrets.MAIL_FROM }}" \
               -e FRONTEND_BASE_URL="${{ secrets.FRONTEND_BASE_URL }}" \
+              -e ACCESS_KEY="${{ secrets.ACCESS_KEY }}" \
+              -e SECRET_KEY="${{ secrets.SECRET_KEY }}" \
               ${{ secrets.DOCKER_HUB_USERNAME }}/springboot-hrms:latest-linux

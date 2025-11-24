@@ -6,16 +6,16 @@ import com.supercoding.hrms.emp.dto.request.EmployeeSaveRequestDto;
 import com.supercoding.hrms.emp.dto.request.EmployeeSearchRequestDto;
 import com.supercoding.hrms.emp.dto.response.*;
 import com.supercoding.hrms.emp.service.EmpService;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.*;
 public class EmpController {
     private final EmpService empService;
 
-    @PostMapping("/employees")
-    public ResponseEntity<EmployeeSaveResponseDto> saveEmployee(@RequestBody @Valid EmployeeSaveRequestDto req) {
-        return ResponseEntity.ok(empService.saveEmployee(req));
+    @PostMapping(value = "/employees", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<EmployeeSaveResponseDto> saveEmployee(@RequestPart("data") @Valid EmployeeSaveRequestDto req, @RequestPart(value = "file", required = true) MultipartFile file) {
+        return ResponseEntity.ok(empService.saveEmployee(req, file));
     }
 
     @PostMapping("/employees/search")
@@ -39,15 +39,15 @@ public class EmpController {
     }
 
     @PatchMapping("/employees/{empId}/lock")
-    public ResponseEntity<CustomException> getAccLock(@PathVariable Long empId) {
+    public ResponseEntity<String> getAccLock(@PathVariable Long empId) {
         empService.getAccLock(empId);
-        return ResponseEntity.ok(new CustomException(CustomMessage.SUCCESS_ACCOUNT_DISABLED));
+        return ResponseEntity.ok("계정이 비활성화되었습니다.");
     }
 
-    @PatchMapping("/employees/{empId}/unlock")
-    public ResponseEntity<CustomException> getAccUnlock(@PathVariable Long empId) {
-        empService.getAccUnlock(empId);
-        return ResponseEntity.ok(new CustomException(CustomMessage.SUCCESS_ACCOUNT_ENABLE));
-
-    }
+//    @PatchMapping("/employees/{empId}/unlock")
+//    public ResponseEntity<CustomException> getAccUnlock(@PathVariable Long empId) {
+//        empService.getAccUnlock(empId);
+//        return ResponseEntity.ok(new CustomException(CustomMessage.SUCCESS_ACCOUNT_ENABLE));
+//
+//    }
 }

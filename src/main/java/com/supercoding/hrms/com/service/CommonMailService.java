@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 public class CommonMailService {
     private final JavaMailSender mailSender;
 
-    @Value("${mail.from}")
+    @Value("${spring.mail.from}")
     private String fromAddress;
 
-    @Value("${mail.frontend-base-url}")
+    @Value("${spring.mail.frontend-base-url}")
     private String frontendBaseUrl;
 
     public void sendMailMessage(String to, String subject, String text) {
