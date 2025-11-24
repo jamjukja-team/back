@@ -11,6 +11,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,19 +37,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String path = request.getRequestURI();
 
-        String token = resolveToken(request);
+        String accessToken = resolveToken(request);
+        String refreshToken = resolveRefreshTokenCookie(request);
 
         if (path.equals("/api/auth/refresh")) {
-            if (token == null) {
+            if (accessToken == null) {
                 throw new CustomException(CustomMessage.FAIL_ACCESS_TOKEN_REQUIRED);
             }
 
             try {
-                jwtTokenProvider.getEmailFromExpiredToken(token);
+                jwtTokenProvider.getEmailFromExpiredToken(accessToken);
 
-            } catch (CustomException cx) {
+            } catch (CustomException ex) {
                 // getEmailFromExpiredToken 내부에서 CustomException으로 이미 변환된 경우
-                CustomMessage cm = cx.getCustomMessage();
+                CustomMessage cm = ex.getCustomMessage();
 
                 ErrorResponse errorResponse = new ErrorResponse(
                         cm.getHttpStatus().value(),         // status (int)
@@ -71,14 +73,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
             return;
-        }
+        } //if-end
 
         try {
-            if (token != null) {
+            if (refreshToken == null && !path.equals("/api/auth/login")) {
+                throw new CustomException(CustomMessage.FAIL_REFRESH_TOKEN_INVALID);
+            }
+
+            if (accessToken != null) {
                 String email = null;
+                jwtTokenProvider.getEmailFromExpiredToken(accessToken);
 
                 try {
-                    email = jwtTokenProvider.getEmailFromToken(token);
+                    email = jwtTokenProvider.getEmailFromToken(accessToken);
                 } catch (ExpiredJwtException e) {
                     throw new CustomException(CustomMessage.FAIL_ACCESS_TOKEN_EXPIRED);
                 }
@@ -113,6 +120,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             return;
         }
+    }
+
+    private String resolveRefreshTokenCookie(HttpServletRequest request) {
+        if (request.getCookies() == null) {
+            return null;
+        }
+
+        for (Cookie cookie : request.getCookies()) {
+            if ("refreshToken".equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+
+        return null;
     }
 
     private String resolveToken(HttpServletRequest request) {
