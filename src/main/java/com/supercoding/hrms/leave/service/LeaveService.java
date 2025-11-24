@@ -60,8 +60,16 @@ public class LeaveService {
     }
 
     // 3. Read (목록)
-    public List<LeaveType> readList() {
-        List<TblLeave> lists = leaveRepository.findAll();
+    public List<LeaveType> readList(String startDate, String endDate, String status, Long empId, String roleType) {
+        List<TblLeave> lists = leaveRepository.findByLeaveRegDateBetween(startDate, endDate);
+
+        if(roleType.equals("USER")){
+            lists = lists.stream().filter(item -> item.getEmpId().equals(empId)).toList(); // 사원이 휴가내역을 볼경우 자신의 empId를 불러와서 자신의 것만 보여주게 해야 한다.
+        }
+
+        if(!status.isEmpty()){ // 전체일 때는 ""(빈값)으로 보내면 됨. 아닐 때는 cd 값으로 보내기
+            lists = lists.stream().filter(item -> item.getLeaveStatus().equals(status)).toList();
+        }
 
         return lists.stream().map(list -> read(list.getLeaveId())).toList();
     }
