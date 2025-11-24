@@ -24,7 +24,6 @@ public class AttendanceResponseDto {
         this.empId = attendance.getEmpId();
         this.startTime = attendance.getStartTime();
         this.endTime = attendance.getEndTime();
-        this.isOverTime = attendance.getIsOverTime();
         this.createdAt = attendance.getCreatedAt();
         this.createdBy = attendance.getCreatedBy();
         this.updatedAt = attendance.getUpdatedAt();

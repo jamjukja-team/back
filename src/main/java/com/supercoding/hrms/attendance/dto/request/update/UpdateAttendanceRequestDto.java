@@ -11,5 +11,4 @@ public class UpdateAttendanceRequestDto {
     private Long updatedBy;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private Boolean isOvertime;
 }

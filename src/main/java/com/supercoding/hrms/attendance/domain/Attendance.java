@@ -32,9 +32,6 @@ public class Attendance {
     @Column
     private LocalDateTime endTime = null; // 퇴근시간
 
-    @Column(nullable = false)
-    private Boolean isOverTime = false;
-
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -76,12 +73,10 @@ public class Attendance {
     /**
      * 퇴근 메서드
      * @param endTime 퇴근시간
-     * @param isOverTime 초과근무 여부
      * @param updatedBy 수정인 (틔근자?)
      */
-    public void getOff(LocalDateTime endTime, Boolean isOverTime,Long updatedBy) {
+    public void getOff(LocalDateTime endTime, Long updatedBy) {
         this.endTime = endTime;
-        this.isOverTime = isOverTime;
         this.updatedBy = updatedBy;
     }
 
@@ -89,13 +84,11 @@ public class Attendance {
      * 업데이트 메서드 - 출퇴근 정정시
      * @param startTime 출근 시간
      * @param endTime 퇴근 시간
-     * @param isOverTime 초과근무 여부
      * @param updatedBy 정정인
      */
-    public void update (LocalDateTime startTime, LocalDateTime endTime, Boolean isOverTime, Long updatedBy) {
+    public void update (LocalDateTime startTime, LocalDateTime endTime, Long updatedBy) {
         this.startTime = startTime;
         this.endTime = endTime;
-        this.isOverTime = isOverTime;
         this.updatedBy = updatedBy;
     }
 
@@ -105,7 +98,6 @@ public class Attendance {
         attendanceResponseDto.setEmpId(this.empId);
         attendanceResponseDto.setStartTime(this.startTime);
         attendanceResponseDto.setEndTime(this.endTime);
-        attendanceResponseDto.setIsOverTime(this.isOverTime);
         attendanceResponseDto.setCreatedBy(this.createdBy);
         attendanceResponseDto.setUpdatedBy(this.updatedBy);
         return attendanceResponseDto;

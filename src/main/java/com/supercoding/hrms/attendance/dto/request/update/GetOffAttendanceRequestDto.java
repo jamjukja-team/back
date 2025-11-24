@@ -9,6 +9,5 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class GetOffAttendanceRequestDto {
     private LocalDateTime endTime;
-    private Boolean isOvertime;
     private Long updateBy;
 }

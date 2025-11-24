@@ -56,7 +56,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                 // 익셉션 처리
         );
 
-        attendance.getOff(request.getEndTime(), request.getIsOvertime(), request.getUpdateBy());
+        attendance.getOff(request.getEndTime(), request.getUpdateBy());
     }
 
     @Override
@@ -68,7 +68,6 @@ public class AttendanceServiceImpl implements AttendanceService {
         attendance.update(
                 request.getStartTime(),
                 request.getEndTime(),
-                request.getIsOvertime(),
                 request.getUpdatedBy()
         );
     }
