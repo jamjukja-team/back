@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -137,11 +138,19 @@ public class PayrollService {
 
     //R(L) (다건 조회)
     //[관리자용] 전체 급여 목록 조회
-    public List<PayrollType> getPayrolls() {
+    public List<PayrollType> getPayrolls(String payMonth, String dept, String status) {
+        // substring(0,6) = YYYYMM
+        List<Payroll> payrolls = payrollRepository.findAll().stream().filter(item -> item.getPayDate().substring(0,6).equals(payMonth)).toList();
 
-        return payrollRepository.findAll().stream()
-                .map(this::setPayrollType)
-                .collect(Collectors.toList());
+        if(!dept.isEmpty()){
+            payrolls = payrolls.stream().filter(item -> empService.getEmployeeByAdmin(item.getEmpId()).getDeptId().equals(dept)).toList();
+        }
+
+        if(!status.isEmpty()){
+            payrolls = payrolls.stream().filter(item -> item.getStatus().equals(status)).toList();
+        }
+
+        return payrolls.stream().map(this::setPayrollType).collect(Collectors.toList());
     }
 
     // 단건과 다건 조회에서 중복으로 쓰여서 분리
