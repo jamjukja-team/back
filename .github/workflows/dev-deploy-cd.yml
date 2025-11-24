@@ -74,4 +74,6 @@ jobs:
               -e MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}" \
               -e MAIL_FROM="${{ secrets.MAIL_FROM }}" \
               -e FRONTEND_BASE_URL="${{ secrets.FRONTEND_BASE_URL }}" \
+              -e ACCESS_KEY="${{ secrets.ACCESS_KEY }}" \
+              -e SECRET_KEY="${{ secrets.SECRET_KEY }}" \
               ${{ secrets.DOCKER_HUB_USERNAME }}/springboot-hrms:latest-linux

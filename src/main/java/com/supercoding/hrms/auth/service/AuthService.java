@@ -46,7 +46,7 @@ public class AuthService {
         //새로운 refresh 토큰 생성
         refreshTokenRepository.save(RefreshToken.builder().empId(employee.getEmpId()).refreshToken(refreshToken).build());
 
-        return new LoginParamResponseDto(accessToken, refreshToken);
+        return new LoginParamResponseDto(accessToken, refreshToken, employee.getRoleCd());
     }
 
     @Transactional

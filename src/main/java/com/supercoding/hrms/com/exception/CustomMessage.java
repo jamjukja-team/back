@@ -7,10 +7,10 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum CustomMessage {
-    SUCCESS_LOGOUT(HttpStatus.OK, "로그아웃이 성공적으로 완료되었습니다."),
-    SUCCESS_ACCOUNT_DISABLED(HttpStatus.OK, "계정이 비활성화되었습니다."),
-    SUCCESS_ACCOUNT_ENABLE(HttpStatus.OK, "계정이 활성화되었습니다."),
-    SUCCESS_PASSWORD_RESET(HttpStatus.OK, "비밀번호가 성공적으로 변경되었습니다."),
+//    SUCCESS_LOGOUT(HttpStatus.OK, "로그아웃이 성공적으로 완료되었습니다."),
+//    SUCCESS_ACCOUNT_DISABLED(HttpStatus.OK, "계정이 비활성화되었습니다."),
+//    SUCCESS_ACCOUNT_ENABLE(HttpStatus.OK, "계정이 활성화되었습니다."),
+//    SUCCESS_PASSWORD_RESET(HttpStatus.OK, "비밀번호가 성공적으로 변경되었습니다."),
 
 
     FAIL_EMAIL_EXISTS(HttpStatus.BAD_REQUEST, "회원가입 실패: 이미 사용 중인 이메일입니다."),
@@ -24,7 +24,10 @@ public enum CustomMessage {
     FAIL_ACCESS_TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "유효하지 않은 액세스 토큰입니다."),
     FAIL_TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
     FAIL_ACCOUNT_STATUS_CODE_NOT_FOUND(HttpStatus.BAD_REQUEST, "계정 비활성화 코드(ACCOUNT_STATUS/DISABLE)를 찾을 수 없습니다."),
-    FAIL_EMAIL_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 이메일의 사용자를 찾을 수 없습니다.");
+    FAIL_EMAIL_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 이메일의 사용자를 찾을 수 없습니다."),
+
+    FAIL_FILE_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드 중 오류가 발생했습니다."),
+    ;
 
 
 

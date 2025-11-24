@@ -31,8 +31,8 @@ public class EmployeeSaveRequestDto {
     @NotBlank(message = "직급을 입력해주세요.")
     private String gradeId;
 
-    @NotBlank(message = "사진을 등록해주세요.")
-    private String photo;
+//    @NotBlank(message = "사진을 등록해주세요.")
+//    private String photo;
 
     @NotBlank(message = "올바른 접근이 아닙니다.")
     private String registerId;
