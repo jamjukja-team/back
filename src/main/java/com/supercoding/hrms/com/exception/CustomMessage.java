@@ -7,10 +7,10 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum CustomMessage {
-    SUCCESS_LOGOUT(HttpStatus.OK, "로그아웃이 성공적으로 완료되었습니다."),
-    SUCCESS_ACCOUNT_DISABLED(HttpStatus.OK, "계정이 비활성화되었습니다."),
-    SUCCESS_ACCOUNT_ENABLE(HttpStatus.OK, "계정이 활성화되었습니다."),
-    SUCCESS_PASSWORD_RESET(HttpStatus.OK, "비밀번호가 성공적으로 변경되었습니다."),
+//    SUCCESS_LOGOUT(HttpStatus.OK, "로그아웃이 성공적으로 완료되었습니다."),
+//    SUCCESS_ACCOUNT_DISABLED(HttpStatus.OK, "계정이 비활성화되었습니다."),
+//    SUCCESS_ACCOUNT_ENABLE(HttpStatus.OK, "계정이 활성화되었습니다."),
+//    SUCCESS_PASSWORD_RESET(HttpStatus.OK, "비밀번호가 성공적으로 변경되었습니다."),
 
 
     FAIL_EMAIL_EXISTS(HttpStatus.BAD_REQUEST, "회원가입 실패: 이미 사용 중인 이메일입니다."),
