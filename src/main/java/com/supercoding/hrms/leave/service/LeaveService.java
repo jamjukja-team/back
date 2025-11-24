@@ -1,5 +1,7 @@
 package com.supercoding.hrms.leave.service;
 
+import com.supercoding.hrms.com.service.CommonMailService;
+import com.supercoding.hrms.leave.domain.TblFile;
 import com.supercoding.hrms.leave.domain.TblLeave;
 import com.supercoding.hrms.leave.dto.LeaveType;
 import com.supercoding.hrms.leave.repository.LeaveRepository;
@@ -15,6 +17,7 @@ public class LeaveService {
 
     private final LeaveRepository leaveRepository;
 
+
     // 1. Create
     public TblLeave create(LeaveType leaveType) {
         TblLeave leave = leaveType.getLeaveInfo();
@@ -28,8 +31,11 @@ public class LeaveService {
     }
 
     // 3. Read (목록)
-    public List<TblLeave> readList() {
-        return leaveRepository.findAll();
+    public List<LeaveType> readList() {
+        List<TblLeave> lists = leaveRepository.findAll();
+        for(TblLeave i : lists){
+
+        }
     }
 
     // 5. Delete (단건)
