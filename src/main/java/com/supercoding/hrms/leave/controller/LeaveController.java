@@ -1,5 +1,6 @@
 package com.supercoding.hrms.leave.controller;
 
+import com.supercoding.hrms.leave.domain.TblLeave;
 import com.supercoding.hrms.leave.domain.TblLeaveCommonCode;
 import com.supercoding.hrms.leave.dto.LeaveType;
 import com.supercoding.hrms.leave.dto.SelectType;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.Parameter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +26,8 @@ public class LeaveController {
 
     // Create
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody LeaveType leaveType) {
-        return ResponseEntity.ok(leaveService.create(leaveType));
+    public ResponseEntity<?> create(@RequestBody TblLeave leave, @RequestPart(value = "file", required = true) MultipartFile file) {
+        return ResponseEntity.ok(leaveService.create(leave, file));
     }
 
     // Read – 단건 R
