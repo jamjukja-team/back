@@ -2,6 +2,9 @@ package com.supercoding.hrms.pay.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.supercoding.hrms.attendance.dto.request.read.ReadWorkhoursRequestDto;
+import com.supercoding.hrms.attendance.dto.response.WorkhourResponseDto;
+import com.supercoding.hrms.attendance.service.WorkhourService;
 import com.supercoding.hrms.emp.dto.response.EmployeeDetailResponseDto;
 import com.supercoding.hrms.emp.service.EmpService;
 import com.supercoding.hrms.pay.domain.*;
@@ -38,7 +41,7 @@ public class PayrollService {
     // 급여 json 파일 가져와서 타입 매핑을 해주기 위함
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-
+    private final WorkhourService workhourService;
 
     /**
      * resources/payroll-data.json 파일을 읽어서 DB에 저장
@@ -179,13 +182,44 @@ public class PayrollService {
         PayrollType payrollType = new PayrollType(
                 empInfo.getEmpNm(),
                 empInfo.getDeptNm(),
-                10,
-                5,
+                getHour(empId,false),
+                getHour(empId,true),
                 calcPay(160, workPay, false),
                 calcPay(10, 0, true)
         );
         return payrollType;
     }
+
+    // 총 근무시간 + 오버타임 계산
+    public Integer getHour(Long empId, Boolean isOverHour){
+        ReadWorkhoursRequestDto param = new ReadWorkhoursRequestDto();
+        param.setEmpId(empId);
+        param.setIsOvertime(isOverHour);
+
+        List<WorkhourResponseDto> workHourList = workhourService.getWorkhours(param); // empId와 overHour, workHour 둘중 하나 선택하는 걸 받아서  해당 되는 WorkhourResponseDto의 리스트들 불러옴
+
+        if (isOverHour){
+            int overHour = (int) workHourList.stream().mapToLong(WorkhourResponseDto::getOvertimeHour).sum();
+            int overMinute = (int) workHourList.stream().mapToLong(WorkhourResponseDto::getOvertimeMinute).sum();
+
+            int lastMinute = overMinute%60>30?1:0;
+
+            overHour = overHour + (overMinute/60) + lastMinute;
+
+            return overHour;
+        }else{
+            int workHour = (int) workHourList.stream().mapToLong(WorkhourResponseDto::getHour).sum();
+            int workMinute = (int) workHourList.stream().mapToLong(WorkhourResponseDto::getMinute).sum();
+
+            int lastMinute = workMinute%60>30?1:0;
+
+            workHour = workHour + (workMinute/60) + lastMinute;
+
+            return workHour;
+        }
+
+    }
+
 
     public List<PayrollDetail> getDetails(Long empId){
         // 조회하고자하는 payroll의 사원id를 사용하여 items 불러오는거
