@@ -38,8 +38,8 @@ public class LeaveController {
 
     // Read(List) – 목록 R(L)
     @GetMapping
-    public ResponseEntity<?> readList() {
-        return ResponseEntity.ok(leaveService.readList());
+    public ResponseEntity<?> readList(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String status, @RequestParam Long empId, @RequestParam String roleType) {
+        return ResponseEntity.ok(leaveService.readList(startDate, endDate, status, empId, roleType));
     }
 
     // Delete – D
@@ -56,7 +56,7 @@ public class LeaveController {
         return ResponseEntity.ok(result);
     }
 
-//    SelectType(드롭다운) API
+//    SelectType(메타데이터) API
 //    프론트가 이렇게 요청
 //    GET /api/leave/select?grpCd=leave_type → 휴가 종류 목록 반환
 //    GET /api/leave/select?grpCd=leave_status → 승인/반려 상태 목록 반환
@@ -77,7 +77,6 @@ public class LeaveController {
 
         return result;
     }
-    // 여기 드롭다운에서 leave_status 관리를 어떻게 해야 하는건지..?
 
     @PutMapping("/{leaveId}")
     public ResponseEntity<?> updateStatus(

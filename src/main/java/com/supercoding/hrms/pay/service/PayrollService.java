@@ -2,6 +2,8 @@ package com.supercoding.hrms.pay.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.supercoding.hrms.emp.dto.response.EmployeeDetailResponseDto;
+import com.supercoding.hrms.emp.service.EmpService;
 import com.supercoding.hrms.pay.domain.*;
 import com.supercoding.hrms.pay.dto.PayrollType;
 import com.supercoding.hrms.pay.repository.ItemNmRepository;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -29,6 +32,8 @@ public class PayrollService {
     private final PayrollDetailRepository payrollDetailRepository;
     private final ItemNmRepository itemNmRepository;
     private final PayRepository payRepository;
+
+    private final EmpService empService;
 
     // 급여 json 파일 가져와서 타입 매핑을 해주기 위함
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -128,44 +133,56 @@ public class PayrollService {
         Payroll payroll = payrollRepository.findById(histId)
                 .orElseThrow(() -> new RuntimeException("해당 급여이력이 없습니다."));
 
-        Integer workPay = payRepository.findById(payroll.getEmpId())
-                .map(Pay::getWorkPay)
-                .orElse(0);
-
-        // 내가 반환하고자 하는 타입(PayrollType)으로 payroll을 맵핑해줌
-        return new PayrollType(
-                histId,
-                payroll.getEmpId(),
-                "김직원",
-                "개발팀",
-                160,
-                10,
-                calcPay(160, workPay, false),
-                calcPay(10, 0, true),
-                PayrollStatus.from(payroll.getStatus()).getDisplayName(),
-                payroll.getPayDate(),
-                getDetails(payroll.getEmpId())
-        );
+        return setPayrollType(payroll);
     }
 
     //R(L) (다건 조회)
     //[관리자용] 전체 급여 목록 조회
-    public List<PayrollType> getPayrolls() {
-        return payrollRepository.findAll().stream()
-                .map(p -> new PayrollType(
-                        p.getPayHistId(),
-                        p.getEmpId(),
-                        "김직원",
-                        "개발팀",
-                        160,
-                        10,
-                        calcPay(160, 100, false),
-                        calcPay(10, 0, true),
-                        PayrollStatus.from(p.getStatus()).getDisplayName(),
-                        "250926",
-                        getDetails(p.getEmpId())
-                ))
-                .collect(Collectors.toList());
+    public List<PayrollType> getPayrolls(String payMonth, String dept, String status) {
+        // substring(0,6) = YYYYMM
+        List<Payroll> payrolls = payrollRepository.findAll().stream().filter(item -> item.getPayDate().substring(0,6).equals(payMonth)).toList();
+
+        if(!dept.isEmpty()){
+            payrolls = payrolls.stream().filter(item -> empService.getEmployeeByAdmin(item.getEmpId()).getDeptId().equals(dept)).toList();
+        }
+
+        if(!status.isEmpty()){
+            payrolls = payrolls.stream().filter(item -> item.getStatus().equals(status)).toList();
+        }
+
+        return payrolls.stream().map(this::setPayrollType).collect(Collectors.toList());
+    }
+
+    // 단건과 다건 조회에서 중복으로 쓰여서 분리
+    public PayrollType setPayrollType(Payroll payroll){
+
+        PayrollType payrollType = getEmpInfo(payroll.getEmpId());
+        payrollType.setPayHistId(payroll.getPayHistId());
+        payrollType.setEmpId(payroll.getEmpId());
+        payrollType.setStatus(PayrollStatus.from(payroll.getStatus()).getDisplayName());
+        payrollType.setPayDate(payroll.getPayDate());
+        payrollType.setItems(getDetails(payroll.getEmpId()));
+
+        return payrollType;
+    }
+
+    // 사원쪽에서 가져온 애라서 따로 빼줌.
+    public PayrollType getEmpInfo(Long empId){
+        Integer workPay = payRepository.findById(empId)
+                .map(Pay::getWorkPay)
+                .orElse(0);
+
+        EmployeeDetailResponseDto empInfo = empService.getEmployeeByAdmin(empId);
+
+        PayrollType payrollType = new PayrollType(
+                empInfo.getEmpNm(),
+                empInfo.getDeptNm(),
+                10,
+                5,
+                calcPay(160, workPay, false),
+                calcPay(10, 0, true)
+        );
+        return payrollType;
     }
 
     public List<PayrollDetail> getDetails(Long empId){
