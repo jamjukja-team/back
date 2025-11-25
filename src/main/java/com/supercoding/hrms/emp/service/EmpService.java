@@ -13,12 +13,14 @@ import com.supercoding.hrms.com.service.CommonMetadataService;
 import com.supercoding.hrms.com.service.CommonUploadService;
 import com.supercoding.hrms.emp.dto.request.EmployeeSaveRequestDto;
 import com.supercoding.hrms.emp.dto.request.EmployeeSearchRequestDto;
+import com.supercoding.hrms.emp.dto.request.EmployeeUpdateRequestDto;
 import com.supercoding.hrms.emp.dto.response.*;
 import com.supercoding.hrms.emp.entity.EmpNoSequence;
 import com.supercoding.hrms.emp.entity.Employee;
 import com.supercoding.hrms.emp.repository.EmpNoSequenceRepository;
 import com.supercoding.hrms.emp.repository.EmployeeRepository;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -237,21 +239,66 @@ public class EmpService {
         Employee employee = employeeRepository.findById(empId).orElseThrow(() -> new CustomException(CustomMessage.FAIL_USER_NOT_FOUND));
 
         EmployeeDetailResponseDto employeeDetailResponseDto = new EmployeeDetailResponseDto(
-                employee.getPhoto() ,
-                employee.getEmpId() ,
-                employee.getEmpNo() ,
-                employee.getDepartment().getDeptId() ,
-                employee.getDepartment().getDeptNm() ,
-                employee.getGrade().getGradeId() ,
-                employee.getGrade().getGradeNm() ,
-                employee.getEmpNm() ,
-                employee.getHireDate() ,
-                employee.getPhone() ,
-                employee.getEmail() ,
-                employee.getAccountStatusCd() ,
+                employee.getPhoto(),
+                employee.getEmpId(),
+                employee.getEmpNo(),
+                employee.getDepartment().getDeptId(),
+                employee.getDepartment().getDeptNm(),
+                employee.getGrade().getGradeId(),
+                employee.getGrade().getGradeNm(),
+                employee.getEmpNm(),
+                employee.getHireDate(),
+                employee.getPhone(),
+                employee.getEmail(),
+                employee.getAccountStatusCd(),
                 employee.getEmpStatusCd()
         );
 
         return new EmployeeMetaDataResponseDto(commonMetadataService.getDepartments(), commonMetadataService.getGrades(), employeeDetailResponseDto);
+    }
+
+    @Transactional
+    public EmployeeUpdateResponseDto updateEmployee(EmployeeUpdateRequestDto req, MultipartFile photo) {
+        Employee employee = employeeRepository.findById(req.getEmpId())
+                .orElseThrow(() -> new CustomException(CustomMessage.EMPLOYEE_NOT_FOUND));
+
+        if (photo != null && !photo.isEmpty()) {
+            employee.updatePhoto(commonUploadService.uploadFile(photo, "employee/photos"));
+        }
+
+        // --- 부서 업데이트 ---
+        if (req.getDeptId() != null && !req.getDeptId().isBlank()) {
+            Department department = departmentRepository.findById(req.getDeptId())
+                    .orElseThrow(() -> new CustomException(CustomMessage.DEPARTMENT_NOT_FOUND));
+
+            employee.updateDepartment(department);
+        }
+
+        // --- 직급 업데이트 ---
+        if (req.getGradeId() != null && !req.getGradeId().isBlank()) {
+            Grade grade = gradeRepository.findById(req.getGradeId())
+                    .orElseThrow(() -> new CustomException(CustomMessage.GRADE_NOT_FOUND));
+
+            employee.updateGrade(grade);
+        }
+
+        employee.updateEmployeeInfo(req);
+
+        return EmployeeUpdateResponseDto.builder()
+                .empId(employee.getEmpId())
+                .empNo(employee.getEmpNo())
+                .email(employee.getEmail())
+                .empNm(employee.getEmpNm())
+                .birthDate(employee.getBirthDate())
+                .hireDate(employee.getHireDate())
+                .phone(employee.getPhone())
+                .deptId(employee.getDepartment().getDeptId())
+                .deptNm(employee.getDepartment().getDeptNm())
+                .gradeId(employee.getGrade().getGradeId())
+                .gradeNm(employee.getGrade().getGradeNm())
+                .photo(employee.getPhoto())
+                .upEmpId(employee.getUpEmpId())
+                .updateAt(String.valueOf(employee.getUpdateAt())).build();
+
     }
 }
