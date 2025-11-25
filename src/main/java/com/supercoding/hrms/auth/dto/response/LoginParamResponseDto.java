@@ -9,5 +9,7 @@ public class LoginParamResponseDto {
     private String accessToken;
     private String refreshToken;
     private String roleCd;
+    private Long empId;
+    private Long empNo;
 
 }

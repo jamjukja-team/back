@@ -2,6 +2,7 @@ package com.supercoding.hrms.emp.entity;
 
 import com.supercoding.hrms.com.entity.Department;
 import com.supercoding.hrms.com.entity.Grade;
+import com.supercoding.hrms.emp.dto.request.EmployeeUpdateRequestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -87,4 +88,39 @@ public class Employee {
     @Column(name= "up_emp_id",nullable = false, length = 4)
     private String upEmpId;
 
+    public void updateEmployeeInfo(EmployeeUpdateRequestDto req) {
+        if (req.getEmail() != null && !req.getEmail().isBlank() && !req.getEmail().equals(this.email)) {
+            this.email = req.getEmail();
+        }
+
+        if (req.getEmpNm() != null && !req.getEmpNm().isBlank() && !req.getEmpNm().equals(this.empNm)) {
+            this.empNm = req.getEmpNm();
+        }
+
+        if (req.getBirthDate() != null && !req.getBirthDate().isBlank() && !req.getBirthDate().equals(this.birthDate)) {
+            this.birthDate = req.getBirthDate();
+        }
+
+        if (req.getPhone() != null && !req.getPhone().isBlank() && !req.getPhone().equals(this.phone)) {
+            this.phone = req.getPhone();
+        }
+
+        if (req.getRegisterId() != null && !req.getRegisterId().isBlank() && !req.getRegisterId().equals(this.upEmpId)) {
+            this.upEmpId = req.getRegisterId();
+        }
+
+        this.updateAt = LocalDate.now();
+    }
+
+    public void updateDepartment(Department department) {
+        this.department = department;
+    }
+
+    public void updateGrade(Grade grade) {
+        this.grade = grade;
+    }
+
+    public void updatePhoto(String photo) {
+        this.photo = photo;
+    }
 }

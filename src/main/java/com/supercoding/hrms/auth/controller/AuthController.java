@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Fetch;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,10 +33,10 @@ public class AuthController {
         refreshCookie.setMaxAge(7 * 24 * 60 * 60);//7일
         response.addCookie(refreshCookie);
 
-        return ResponseEntity.ok(new AccessTokenResponseDto(tokens.getAccessToken(), tokens.getRoleCd()));
+        return ResponseEntity.ok(new AccessTokenResponseDto(tokens.getAccessToken(), tokens.getRoleCd(), tokens.getEmpId(), tokens.getEmpNo()));
     }
 
-    @PostMapping("/set-password")
+    @PatchMapping("/set-password")
     public ResponseEntity<String> setInitialPassword(@RequestBody SetPasswordRequestDto request) {
         authService.setInitialPassword(request);
         return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
