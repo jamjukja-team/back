@@ -40,45 +40,45 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String accessToken = resolveToken(request);
 //        String refreshToken = resolveRefreshTokenCookie(request);
 
-//        if(path.equals("/api/auth/login")) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
-
-        if (path.equals("/api/auth/refresh")) {
-            if (accessToken == null) {
-                throw new CustomException(CustomMessage.FAIL_ACCESS_TOKEN_REQUIRED);
-            }
-
-            try {
-                jwtTokenProvider.getEmailFromExpiredToken(accessToken);
-
-            } catch (CustomException ex) {
-                // getEmailFromExpiredToken 내부에서 CustomException으로 이미 변환된 경우
-                CustomMessage cm = ex.getCustomMessage();
-
-                ErrorResponse errorResponse = new ErrorResponse(
-                        cm.getHttpStatus().value(),         // status (int)
-                        cm.getHttpStatus().name(),          // error (String)
-                        cm.name(),                          // code (String)
-                        cm.getMessage()                     // message (String)
-                );
-
-                response.setStatus(cm.getHttpStatus().value());
-                response.setContentType("application/json;charset=UTF-8");
-
-                response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-
-                return;
-
-            } catch (Exception ex) {
-                // 그 외 모든 JWT 오류
-                throw new CustomException(CustomMessage.FAIL_ACCESS_TOKEN_INVALID);
-            }
-
+        if(path.equals("/api/auth/refresh")) {
             filterChain.doFilter(request, response);
             return;
-        } //if-end
+        }
+
+//        if (path.equals("/api/auth/refresh")) {
+//            if (refreshToken == null) {
+//                throw new CustomException(CustomMessage.FAIL_REFRESH_TOKEN_INVALID);
+//            }
+//
+//            try {
+//                jwtTokenProvider.getEmailFromExpiredToken(refreshToken);
+//
+//            } catch (CustomException ex) {
+//                // getEmailFromExpiredToken 내부에서 CustomException으로 이미 변환된 경우
+//                CustomMessage cm = ex.getCustomMessage();
+//
+//                ErrorResponse errorResponse = new ErrorResponse(
+//                        cm.getHttpStatus().value(),         // status (int)
+//                        cm.getHttpStatus().name(),          // error (String)
+//                        cm.name(),                          // code (String)
+//                        cm.getMessage()                     // message (String)
+//                );
+//
+//                response.setStatus(cm.getHttpStatus().value());
+//                response.setContentType("application/json;charset=UTF-8");
+//
+//                response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+//
+//                return;
+//
+//            } catch (Exception ex) {
+//                // 그 외 모든 JWT 오류
+//                throw new CustomException(CustomMessage.FAIL_TOKEN_INVALID);
+//            }
+//
+//            filterChain.doFilter(request, response);
+//            return;
+//        } //if-end
 
         try {
 //            if (refreshToken == null && !path.equals("/api/auth/login")) {

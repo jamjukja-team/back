@@ -15,7 +15,7 @@ public class JwtTokenProvider {
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public String generateAccessToken(String email) {
-        long expiration_10m = 1000L * 60 * 10;//1000L * 60 * 10;
+        long expiration_10m = 1000L * 20;//1000L * 60 * 10;
         return Jwts.builder()
                 .setSubject(email)
                 .claim("token_type", "ACCESS")
@@ -26,7 +26,7 @@ public class JwtTokenProvider {
     }
 
     public String generateRefreshToken(String email) {
-        long expiration_30m = 1000L * 60 * 30; //1000L * 60 * 30;
+        long expiration_30m = 1000L * 60; //1000L * 60 * 30;
         return Jwts.builder()
                 .setSubject(email)
                 .claim("token_type", "REFRESH")
