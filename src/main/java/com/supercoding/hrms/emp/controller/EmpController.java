@@ -1,9 +1,9 @@
 package com.supercoding.hrms.emp.controller;
 
-import com.supercoding.hrms.com.exception.CustomException;
-import com.supercoding.hrms.com.exception.CustomMessage;
+
 import com.supercoding.hrms.emp.dto.request.EmployeeSaveRequestDto;
 import com.supercoding.hrms.emp.dto.request.EmployeeSearchRequestDto;
+import com.supercoding.hrms.emp.dto.request.EmployeeUpdateRequestDto;
 import com.supercoding.hrms.emp.dto.response.*;
 import com.supercoding.hrms.emp.service.EmpService;
 import jakarta.validation.Valid;
@@ -50,10 +50,9 @@ public class EmpController {
         return ResponseEntity.ok("계정이 비활성화되었습니다.");
     }
 
-//    @PatchMapping("/employees/{empId}/unlock")
-//    public ResponseEntity<CustomException> getAccUnlock(@PathVariable Long empId) {
-//        empService.getAccUnlock(empId);
-//        return ResponseEntity.ok(new CustomException(CustomMessage.SUCCESS_ACCOUNT_ENABLE));
-//
-//    }
+    @PatchMapping("/employees/update")
+    public ResponseEntity<EmployeeUpdateResponseDto> updateEmployee(@RequestPart("data") @Valid EmployeeUpdateRequestDto req, @RequestPart(value = "file", required = true) MultipartFile photo) {
+        return ResponseEntity.ok(empService.updateEmployee(req, photo));
+
+    }
 }

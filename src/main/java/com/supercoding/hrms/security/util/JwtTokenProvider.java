@@ -15,23 +15,23 @@ public class JwtTokenProvider {
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public String generateAccessToken(String email) {
-        long expiration_10m = 1000L * 60 * 10;//1000L * 60 * 10;
+        long expiration_30m = 1000L * 60 * 30;
         return Jwts.builder()
                 .setSubject(email)
                 .claim("token_type", "ACCESS")
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration_10m))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration_30m))
                 .signWith(key)
                 .compact();
     }
 
     public String generateRefreshToken(String email) {
-        long expiration_30m = 1000L * 60 * 30; //1000L * 60 * 30;
+        long expiration_7d = 1000L * 60 * 60 * 24 * 7;
         return Jwts.builder()
                 .setSubject(email)
                 .claim("token_type", "REFRESH")
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration_30m))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration_7d))
                 .signWith(key)
                 .compact();
     }
