@@ -38,12 +38,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         String accessToken = resolveToken(request);
-        String refreshToken = resolveRefreshTokenCookie(request);
+//        String refreshToken = resolveRefreshTokenCookie(request);
 
-        if(path.equals("/api/auth/login")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+//        if(path.equals("/api/auth/login")) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
 
         if (path.equals("/api/auth/refresh")) {
             if (accessToken == null) {
@@ -81,9 +81,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } //if-end
 
         try {
-            if (refreshToken == null && !path.equals("/api/auth/login")) {
-                throw new CustomException(CustomMessage.FAIL_REFRESH_TOKEN_INVALID);
-            }
+//            if (refreshToken == null && !path.equals("/api/auth/login")) {
+//                throw new CustomException(CustomMessage.FAIL_REFRESH_TOKEN_INVALID);
+//            }
 
             if (accessToken != null) {
                 String email = null;
