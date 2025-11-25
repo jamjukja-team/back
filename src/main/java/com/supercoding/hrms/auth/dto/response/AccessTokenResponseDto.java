@@ -6,6 +6,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class AccessTokenResponseDto {
-    String accessToken;
-    String roleCd;
+    private String accessToken;
+    private String roleCd;
+    private Long empId;
+    private Long empNo;
 }
