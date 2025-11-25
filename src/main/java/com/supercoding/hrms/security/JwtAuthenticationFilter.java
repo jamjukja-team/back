@@ -40,6 +40,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String accessToken = resolveToken(request);
         String refreshToken = resolveRefreshTokenCookie(request);
 
+        if(path.equals("/api/auth/login")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if (path.equals("/api/auth/refresh")) {
             if (accessToken == null) {
                 throw new CustomException(CustomMessage.FAIL_ACCESS_TOKEN_REQUIRED);
