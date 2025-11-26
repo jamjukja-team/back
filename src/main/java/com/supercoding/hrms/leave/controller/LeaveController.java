@@ -26,7 +26,7 @@ public class LeaveController {
 
     // Create
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody TblLeave leave, @RequestPart(value = "file", required = false) MultipartFile file) {
+    public ResponseEntity<?> create(@RequestPart("leave") TblLeave leave, @RequestPart(value = "file", required = false) MultipartFile file) {
         return ResponseEntity.ok(leaveService.create(leave, file));
     }
 
