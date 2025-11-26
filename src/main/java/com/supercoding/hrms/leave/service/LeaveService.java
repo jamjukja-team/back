@@ -47,6 +47,7 @@ public class LeaveService {
             return new LeaveType(saveLeave, saveFile);
         }else{
             TblLeave saveLeave = leaveRepository.save(leave);
+            leave.setLeaveStatus("WAIT");
             return new LeaveType(saveLeave, null);
         }
     }
