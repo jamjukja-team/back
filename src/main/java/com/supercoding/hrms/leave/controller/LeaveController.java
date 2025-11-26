@@ -37,8 +37,9 @@ public class LeaveController {
 
     // Read(List) – 목록 R(L)
     @GetMapping
-    public ResponseEntity<?> readList(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String status, @RequestParam Long empId, @RequestParam String roleType) {
-        return ResponseEntity.ok(leaveService.readList(startDate, endDate, status, empId, roleType));
+    public ResponseEntity<?> readList(
+            @RequestParam(defaultValue = "") String startDate, @RequestParam(defaultValue = "") String endDate, @RequestParam(defaultValue = "") String status, @RequestParam(defaultValue = "") Long empId, @RequestParam(defaultValue = "") String roleType, @RequestParam(defaultValue = "") String deptId, @RequestParam(defaultValue = "") String gradeId, @RequestParam(defaultValue = "") String empNm) {
+        return ResponseEntity.ok(leaveService.readList(startDate, endDate, status, empId, roleType, deptId, gradeId, empNm));
     }
 
     // Delete – D
@@ -55,7 +56,7 @@ public class LeaveController {
         return ResponseEntity.ok(result);
     }
 
-//    SelectType(메타데이터) API
+    //    SelectType(메타데이터) API
 //    프론트가 이렇게 요청
 //    GET /api/leave/select?grpCd=leave_type → 휴가 종류 목록 반환
 //    GET /api/leave/select?grpCd=leave_status → 승인/반려 상태 목록 반환

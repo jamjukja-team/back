@@ -1,6 +1,8 @@
 package com.supercoding.hrms.leave.service;
 
 import com.supercoding.hrms.com.service.CommonUploadService;
+import com.supercoding.hrms.emp.entity.Employee;
+import com.supercoding.hrms.emp.repository.EmployeeRepository;
 import com.supercoding.hrms.leave.domain.TblFile;
 import com.supercoding.hrms.leave.domain.TblLeave;
 import com.supercoding.hrms.leave.dto.LeaveType;
@@ -21,6 +23,8 @@ public class LeaveService {
     private final LeaveRepository leaveRepository;
     private final FileRepository fileRepository;
     private final CommonUploadService uploadService;
+
+    private final EmployeeRepository employeeRepository;
 
     // 1. Create
     public LeaveType create(TblLeave leave, MultipartFile file) {
@@ -62,11 +66,30 @@ public class LeaveService {
     }
 
     // 3. Read (목록)
-    public List<LeaveType> readList(String startDate, String endDate, String status, Long empId, String roleType) {
+    public List<LeaveType> readList(String startDate, String endDate, String status, Long empId, String roleType, String deptId, String gradeId, String empNm) {
         List<TblLeave> lists = leaveRepository.findByLeaveRegDateBetween(startDate, endDate);
 
         if(roleType.equals("USER")){
             lists = lists.stream().filter(item -> item.getEmpId().equals(empId)).toList(); // 사원이 휴가내역을 볼경우 자신의 empId를 불러와서 자신의 것만 보여주게 해야 한다.
+        }
+
+        List<Employee> employeeList = employeeRepository.findAll();
+
+        if(!deptId.isEmpty()){
+            employeeList = filterByDept(deptId, employeeList);
+        }
+
+        if(!gradeId.isEmpty()){
+            employeeList = filterByGrade(gradeId, employeeList);
+        }
+
+        if(!empNm.isEmpty()){
+            employeeList = filterByName(empNm, employeeList);
+        }
+
+        if(!employeeList.isEmpty()){
+            List<Long> empIds = employeeList.stream().map(Employee::getEmpId).toList();
+            lists = lists.stream().filter(item -> empIds.contains(item.getEmpId())).toList();
         }
 
         if(!status.isEmpty()){ // 전체일 때는 ""(빈값)으로 보내면 됨. 아닐 때는 cd 값으로 보내기
@@ -74,6 +97,21 @@ public class LeaveService {
         }
 
         return lists.stream().map(list -> read(list.getLeaveId())).toList();
+    }
+
+    //전체 사원 조회 받아서 부서별 필터링
+    public List<Employee> filterByDept(String deptId, List<Employee> employees){
+        return employees.stream().filter(item -> item.getDepartment().getDeptId().equals(deptId)).toList();
+    }
+
+    //전체 사원 조회 받아서 직급별 필터링
+    public List<Employee> filterByGrade(String gradeId, List<Employee> employees){
+        return employees.stream().filter(item -> item.getGrade().getGradeId().equals(gradeId)).toList();
+    }
+
+    //전체 사원 조회 받아서 이름별 필터링
+    public List<Employee> filterByName(String nameId, List<Employee> employees){
+        return employees.stream().filter(item -> item.getEmpNm().equals(nameId)).toList();
     }
 
     // 5. Delete (단건)
