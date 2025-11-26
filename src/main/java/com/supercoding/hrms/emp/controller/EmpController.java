@@ -25,14 +25,10 @@ public class EmpController {
 
     @PostMapping(value = "/employees", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<EmployeeSaveResponseDto> saveEmployee(@RequestPart("data") @Valid EmployeeSaveRequestDto req, @RequestPart(value = "file", required = true) MultipartFile file) {
-        System.out.println("============");
-        System.out.println(req);
-        System.out.println(file);
-        System.out.println("============");
         return ResponseEntity.ok(empService.saveEmployee(req, file));
     }
 
-    @PostMapping("/employees/search")
+    @GetMapping("/employees/search")
     public ResponseEntity<Page<EmployeeSearchResponseDto>> searchEmployees(@RequestBody EmployeeSearchRequestDto request, @PageableDefault(size = 10, sort = "empId", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(empService.searchEmployees(request, pageable));
     }
