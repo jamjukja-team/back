@@ -28,7 +28,7 @@ public class EmpController {
         return ResponseEntity.ok(empService.saveEmployee(req, file));
     }
 
-    @PostMapping("/employees/search")
+    @GetMapping("/employees/search")
     public ResponseEntity<Page<EmployeeSearchResponseDto>> searchEmployees(@RequestBody EmployeeSearchRequestDto request, @PageableDefault(size = 10, sort = "empId", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(empService.searchEmployees(request, pageable));
     }
