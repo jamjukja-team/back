@@ -38,8 +38,8 @@ public class PayrollController {
     //R(L) (Read List)
     //전체 급여 목록 조회 (관리자용)
     @GetMapping("/list")
-    public ResponseEntity<List<PayrollType>> getPayrolls(@RequestParam String payMonth, @RequestParam String dept, @RequestParam String status) {
-        return ResponseEntity.ok(payrollService.getPayrolls(payMonth, dept, status));
+    public ResponseEntity<List<PayrollType>> getPayrolls(@RequestParam String payMonth, @RequestParam String deptId, @RequestParam String status, @RequestParam String gradeId, @RequestParam String empNm) {
+        return ResponseEntity.ok(payrollService.getPayrolls(payMonth, deptId, status, gradeId, empNm));
     }
 
     // payDetail에 고정된 항목 이름들.
