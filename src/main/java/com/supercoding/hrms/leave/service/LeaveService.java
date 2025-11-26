@@ -41,6 +41,7 @@ public class LeaveService {
             TblFile saveFile = fileRepository.save(tblFile);
 
             leave.setFileId(fileId);
+            leave.setLeaveStatus("WAIT");
             TblLeave saveLeave = leaveRepository.save(leave);
 
             return new LeaveType(saveLeave, saveFile);

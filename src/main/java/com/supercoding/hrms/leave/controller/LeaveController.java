@@ -2,12 +2,11 @@ package com.supercoding.hrms.leave.controller;
 
 import com.supercoding.hrms.leave.domain.TblLeave;
 import com.supercoding.hrms.leave.domain.TblLeaveCommonCode;
-import com.supercoding.hrms.leave.dto.LeaveType;
 import com.supercoding.hrms.leave.dto.SelectType;
 import com.supercoding.hrms.leave.repository.LeaveCommonCodeRepository;
 import com.supercoding.hrms.leave.service.LeaveService;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Parameter;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,8 +24,8 @@ public class LeaveController {
     private final LeaveCommonCodeRepository leaveCommonCodeRepository;
 
     // Create
-    @PostMapping
-    public ResponseEntity<?> create(@RequestBody TblLeave leave, @RequestPart(value = "file", required = true) MultipartFile file) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> create(@RequestPart("leave") TblLeave leave, @RequestPart(value = "file", required = false) MultipartFile file) {
         return ResponseEntity.ok(leaveService.create(leave, file));
     }
 
