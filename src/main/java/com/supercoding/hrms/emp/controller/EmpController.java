@@ -52,6 +52,10 @@ public class EmpController {
 
     @PatchMapping("/employees/update")
     public ResponseEntity<EmployeeUpdateResponseDto> updateEmployee(@RequestPart("data") @Valid EmployeeUpdateRequestDto req, @RequestPart(value = "file", required = true) MultipartFile photo) {
+        System.out.println("===============");
+        System.out.println(req);
+        System.out.println(photo);
+        System.out.println("===============");
         return ResponseEntity.ok(empService.updateEmployee(req, photo));
     }
 
