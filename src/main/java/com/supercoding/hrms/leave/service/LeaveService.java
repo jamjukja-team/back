@@ -8,16 +8,14 @@ import com.supercoding.hrms.leave.domain.TblLeave;
 import com.supercoding.hrms.leave.dto.LeaveType;
 import com.supercoding.hrms.leave.repository.FileRepository;
 import com.supercoding.hrms.leave.repository.LeaveRepository;
-import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -30,6 +28,17 @@ public class LeaveService {
     private final CommonUploadService uploadService;
 
     private final EmployeeRepository employeeRepository;
+
+    private String getEmpNm(Long empId){
+        // 사원이름(empNm)을 가져오기 위함 LeaveType에 넣으려고
+        String empNm = "";
+        Optional<Employee> emp = employeeRepository.findById(empId);
+        if(emp.isPresent()){
+            empNm = emp.get().getEmpNm();
+        }
+
+        return empNm;
+    }
 
     // 1. Create
     public LeaveType create(TblLeave leave, MultipartFile file) {
@@ -53,11 +62,16 @@ public class LeaveService {
             leave.setLeaveStatus("WAIT");
             TblLeave saveLeave = leaveRepository.save(leave);
 
-            return new LeaveType(saveLeave, saveFile);
+            String empNm = getEmpNm(leave.getEmpId());
+
+            return new LeaveType(saveLeave, saveFile, empNm);
         }else{
             leave.setLeaveStatus("WAIT");
             TblLeave saveLeave = leaveRepository.save(leave);
-            return new LeaveType(saveLeave, null);
+
+            String empNm = getEmpNm(leave.getEmpId());
+
+            return new LeaveType(saveLeave, null, empNm);
         }
     }
 
@@ -67,7 +81,11 @@ public class LeaveService {
         String fileId = tblLeave!=null?tblLeave.getFileId():"";
         TblFile tblFile = fileId.isEmpty()?null:fileRepository.findById(fileId).orElse(null);
 
-        return new LeaveType(tblLeave, tblFile);
+        // 사원 이름 받는거
+        assert tblLeave != null;
+        String empNm = getEmpNm(tblLeave.getEmpId());
+
+        return new LeaveType(tblLeave, tblFile, empNm);
     }
 
     // 3. Read (목록)

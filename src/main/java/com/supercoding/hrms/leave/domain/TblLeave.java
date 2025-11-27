@@ -1,13 +1,10 @@
 package com.supercoding.hrms.leave.domain;
 
-import com.supercoding.hrms.emp.entity.Employee;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import static jakarta.persistence.FetchType.LAZY;
 
 @Data
 @NoArgsConstructor

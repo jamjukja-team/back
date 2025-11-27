@@ -20,11 +20,12 @@ public class PayrollController {
 
     //C (Create)
     //급여 이력 생성
-    // 한달에 한번 자동 생성
-    @PostMapping
-    public void createPayroll(@RequestBody PayrollType request) {
-        payrollService.loadPayrollFromJson();
-    }
+    //한달에 한번 자동 생성
+    //스케줄러가 알아서 한달에 한번 만들것이기 대문에 컨트롤러에서 create 자체가 필요가 없음
+//    @PostMapping
+//    public void createPayroll(@RequestBody PayrollType request) {
+//        payrollService.loadPayrollFromJson();
+//    }
 
     //R (Read)
     //특정 급여 이력 상세 조회

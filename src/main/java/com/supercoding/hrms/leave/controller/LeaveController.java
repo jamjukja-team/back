@@ -6,8 +6,6 @@ import com.supercoding.hrms.leave.dto.SelectType;
 import com.supercoding.hrms.leave.repository.LeaveCommonCodeRepository;
 import com.supercoding.hrms.leave.service.LeaveService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
