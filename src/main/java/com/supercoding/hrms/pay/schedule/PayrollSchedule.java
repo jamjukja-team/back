@@ -1,6 +1,5 @@
 package com.supercoding.hrms.pay.schedule;
 
-import com.supercoding.hrms.pay.dto.PayrollType;
 import com.supercoding.hrms.pay.service.PayrollService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,9 +13,8 @@ public class PayrollSchedule {
 
     private final PayrollService payrollService;
 
-//    @Scheduled(cron = "* * * * 1 *")
-//    public void test(){
-//        PayrollType payrollType = new PayrollType();
-//        payrollService.loadPayrollFromJson();
-//    }
+    @Scheduled(cron = "0 0 0 1 1/1 ? *")
+    public void test(){
+        payrollService.createPayroll();
+    }
 }

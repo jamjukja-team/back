@@ -20,13 +20,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -78,6 +76,23 @@ public class PayrollService {
         } catch (Exception e) {
             log.error("급여 데이터 JSON 로드 실패: {}", e.getMessage(), e);
         }
+    }
+
+    // 사원에서 다 불러오고 이를 이용 해서 payroll들을 새로 만듬. 이 payroll들을 저장
+    // 스케줄러에서 매월 1일 사원들의 급여를 저장하기 위함
+    public void createPayroll(){
+        List<Employee> employeeList = employeeRepository.findAll();
+        List<Payroll> payrollList = employeeList.stream().map(item ->
+                new Payroll(null, item.getEmpId(), "CALCULATING", getFirstDayOfCurrentMonth())).toList();
+
+        payrollRepository.saveAll(payrollList);
+    }
+
+    //오늘 날짜 기준으로 이번 달의 1일 반환 (yyyyMMdd)
+    public static String getFirstDayOfCurrentMonth() {
+        LocalDate today = LocalDate.now();
+        LocalDate firstDay = today.withDayOfMonth(1);
+        return firstDay.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
     }
 
     //C, R, R(L), U, D, D(L) 규칙에 따라

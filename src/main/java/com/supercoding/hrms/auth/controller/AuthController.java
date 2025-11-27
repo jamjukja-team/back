@@ -74,5 +74,12 @@ public class AuthController {
         return ResponseEntity.ok("로그아웃이 성공적으로 완료되었습니다.");
     }
 
+    @PatchMapping("/set-password/reset")
+    public ResponseEntity<String> resetPassword(@RequestBody SetPasswordRequestDto request) {
+        authService.createResetToken();
+
+        return  null;
+    }
+
 
 }

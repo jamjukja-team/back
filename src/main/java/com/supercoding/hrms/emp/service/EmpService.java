@@ -111,6 +111,7 @@ public class EmpService {
     @Transactional(readOnly = true)
     public Page<EmployeeSearchResponseDto> searchEmployees(EmployeeSearchRequestDto request, Pageable pageable) {
         Specification<Employee> spec = buildSearchSpec(request);
+        System.out.println(request);
         Page<Employee> page = employeeRepository.findAll(spec, pageable);
 
         // EMP_STATUS 그룹의 코드 목록을 조회한다.
@@ -142,16 +143,16 @@ public class EmpService {
             List<Predicate> predicates = new ArrayList<>();
 
             //부서 조건
-            if(request.getDeptFilterCd() != null && !"DEPT_ALL".equals(request.getDeptFilterCd())) {
+            if(request.getDeptId() != null && !"DEPT_ALL".equals(request.getDeptId())) {
                 predicates.add(//조건 추가
-                        cb.equal(root.get("department").get("deptId"), request.getDeptFilterCd())
+                        cb.equal(root.get("department").get("deptId"), request.getDeptId())
                 );
             }
 
             //직급 조건
-            if (request.getGradeFilterCd() != null && !"GRADE_ALL".equals(request.getGradeFilterCd())) {
+            if (request.getGradeId() != null && !"GRADE_ALL".equals(request.getGradeId())) {
                 predicates.add(
-                        cb.equal(root.get("grade").get("gradeId"), request.getGradeFilterCd())
+                        cb.equal(root.get("grade").get("gradeId"), request.getGradeId())
                 );
             }
             
@@ -204,7 +205,8 @@ public class EmpService {
                 employee.getPhone(),
                 employee.getEmail(),
                 employee.getAccountStatusCd(),
-                employee.getEmpStatusCd()
+                employee.getEmpStatusCd(),
+                employee.getBirthDate()
         );
     }
 
@@ -251,7 +253,8 @@ public class EmpService {
                 employee.getPhone(),
                 employee.getEmail(),
                 employee.getAccountStatusCd(),
-                employee.getEmpStatusCd()
+                employee.getEmpStatusCd(),
+                employee.getBirthDate()
         );
 
         return new EmployeeMetaDataResponseDto(commonMetadataService.getDepartments(), commonMetadataService.getGrades(), employeeDetailResponseDto);
@@ -262,10 +265,15 @@ public class EmpService {
         Employee employee = employeeRepository.findById(req.getEmpId())
                 .orElseThrow(() -> new CustomException(CustomMessage.EMPLOYEE_NOT_FOUND));
 
+        System.out.println("====test1=========");
+        System.out.println(req);
+        System.out.println(photo);
+        System.out.println("====test2=========");
+
         if (photo != null && !photo.isEmpty()) {
             employee.updatePhoto(commonUploadService.uploadFile(photo, "employee/photos"));
         }
-
+        System.out.println("====test3=========");
         // --- 부서 업데이트 ---
         if (req.getDeptId() != null && !req.getDeptId().isBlank()) {
             Department department = departmentRepository.findById(req.getDeptId())
@@ -273,7 +281,7 @@ public class EmpService {
 
             employee.updateDepartment(department);
         }
-
+        System.out.println("====test4=========");
         // --- 직급 업데이트 ---
         if (req.getGradeId() != null && !req.getGradeId().isBlank()) {
             Grade grade = gradeRepository.findById(req.getGradeId())
@@ -281,9 +289,9 @@ public class EmpService {
 
             employee.updateGrade(grade);
         }
-
+        System.out.println("====test5=========");
         employee.updateEmployeeInfo(req);
-
+        System.out.println("====test6=========");
         return EmployeeUpdateResponseDto.builder()
                 .empId(employee.getEmpId())
                 .empNo(employee.getEmpNo())

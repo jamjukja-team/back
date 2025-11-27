@@ -28,7 +28,7 @@ public class EmpController {
         return ResponseEntity.ok(empService.saveEmployee(req, file));
     }
 
-    @GetMapping("/employees/search")
+    @PostMapping("/employees/search")
     public ResponseEntity<Page<EmployeeSearchResponseDto>> searchEmployees(@RequestBody EmployeeSearchRequestDto request, @PageableDefault(size = 10, sort = "empId", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(empService.searchEmployees(request, pageable));
     }
@@ -52,7 +52,17 @@ public class EmpController {
 
     @PatchMapping("/employees/update")
     public ResponseEntity<EmployeeUpdateResponseDto> updateEmployee(@RequestPart("data") @Valid EmployeeUpdateRequestDto req, @RequestPart(value = "file", required = true) MultipartFile photo) {
+        System.out.println("===============");
+        System.out.println(req);
+        System.out.println(photo);
+        System.out.println("===============");
         return ResponseEntity.ok(empService.updateEmployee(req, photo));
-
     }
+
+    @PatchMapping("/employees/{empId}/unlock")
+    public ResponseEntity<String> getUnAccLock(@PathVariable Long empId) {
+        empService.getAccUnlock(empId);
+        return ResponseEntity.ok("계정이 활성화되었습니다.");
+    }
+
 }

@@ -1,6 +1,9 @@
 package com.supercoding.hrms.leave.repository;
 
 import com.supercoding.hrms.leave.domain.TblLeave;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

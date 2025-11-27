@@ -27,5 +27,6 @@ public class EmployeeDetailResponseDto {
     //연차
     private String accountStatusCd;
     private String empStatusCd;
+    private String birthDate;
 
 }

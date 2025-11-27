@@ -43,8 +43,11 @@ public class TblLeave {
     @Column(name = "leave_status")
     private String leaveStatus; //상태
 
-    @Column(name = "emp_Id")
-    private Long empId; //사번
+//    @ManyToOne(fetch = LAZY)
+//    @JoinColumn(name = "emp_Id", nullable = false)
+//    private Employee employee; //사번
+
+    private Long empId;
 
     @Column(name = "reject_reason")
     private String rejectReason; // 반려사유

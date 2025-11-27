@@ -11,8 +11,8 @@ public class EmployeeSearchResponseDto {
     private String empNm;
     private String deptNm;
     private String gradeNm;
-    private String empStatusNm;
-    private String accountStatusNm;
+    private String empStatusCd;
+    private String accountStatusCd;
     private String hireDate;
 
 }
