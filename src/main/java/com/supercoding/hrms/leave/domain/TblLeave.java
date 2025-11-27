@@ -1,10 +1,13 @@
 package com.supercoding.hrms.leave.domain;
 
+import com.supercoding.hrms.emp.entity.Employee;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Data
 @NoArgsConstructor
@@ -43,8 +46,9 @@ public class TblLeave {
     @Column(name = "leave_status")
     private String leaveStatus; //상태
 
-    @Column(name = "emp_Id")
-    private Long empId; //사번
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "emp_Id", nullable = false)
+    private Employee employee; //사번
 
     @Column(name = "reject_reason")
     private String rejectReason; // 반려사유

@@ -1,36 +1,36 @@
 package com.supercoding.hrms.auth.entity;
 
+import com.supercoding.hrms.emp.entity.Employee;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-@Entity
+@Builder
 @Getter
-@NoArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
 public class ResetToken {
     @Id
-    @Column(name = "token_id")
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ret_id")
+    private Long retId;
 
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "emp_id", nullable = false)
+    private Employee employee;
 
-    @Column(unique = true)
-    private String token;
+    @Column(name = "ret_token", nullable = false, length = 128)
+    private String resetToken;
 
+    @Column(name = "expires_at", nullable = false)
     private LocalDateTime expiresAt;
 
-    private boolean used;
+    @Column(name = "used", nullable = false)
+    private Boolean used;
 
-    public static ResetToken create(Long userId) {
-        ResetToken rt = new ResetToken();
-        rt.id = UUID.randomUUID().toString();
-        rt.userId = userId;
-        rt.token = UUID.randomUUID().toString(); // 진짜 토큰
-        rt.expiresAt = LocalDateTime.now().plusMinutes(30);
-        rt.used = false;
-        return rt;
-    }
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
 }

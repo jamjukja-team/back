@@ -91,4 +91,8 @@ public class AuthService {
         refreshTokenRepository.revokeAllByEmpId(employee.getEmpId());
 
     }
+
+    public void createResetToken() {
+
+    }
 }
