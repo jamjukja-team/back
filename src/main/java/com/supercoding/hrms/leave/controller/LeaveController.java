@@ -2,13 +2,10 @@ package com.supercoding.hrms.leave.controller;
 
 import com.supercoding.hrms.leave.domain.TblLeave;
 import com.supercoding.hrms.leave.domain.TblLeaveCommonCode;
-import com.supercoding.hrms.leave.dto.LeaveListResponse;
-import com.supercoding.hrms.leave.dto.LeaveSearchRequest;
 import com.supercoding.hrms.leave.dto.SelectType;
 import com.supercoding.hrms.leave.repository.LeaveCommonCodeRepository;
 import com.supercoding.hrms.leave.service.LeaveService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -45,14 +42,6 @@ public class LeaveController {
     public ResponseEntity<?> readList(
             @RequestParam(defaultValue = "") String startDate, @RequestParam(defaultValue = "") String endDate, @RequestParam(defaultValue = "") String status, @RequestParam(defaultValue = "") Long empId, @RequestParam(defaultValue = "") String roleType, @RequestParam(defaultValue = "") String deptId, @RequestParam(defaultValue = "") String gradeId, @RequestParam(defaultValue = "") String empNm) {
         return ResponseEntity.ok(leaveService.readList(startDate, endDate, status, empId, roleType, deptId, gradeId, empNm));
-    }
-
-    // Read(List) - 관리자 조회 목록
-    @PostMapping("/leaves/search")
-    public ResponseEntity<Page<LeaveListResponse>> searchLeaves(@RequestBody LeaveSearchRequest requestDto, Pageable pageable) {
-
-        Page<LeaveListResponse> response = leaveService.searchLeaves(requestDto, pageable);
-        return ResponseEntity.ok(response);
     }
 
     // Delete – D
