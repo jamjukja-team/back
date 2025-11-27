@@ -55,5 +55,10 @@ public class EmpController {
         return ResponseEntity.ok(empService.updateEmployee(req, photo));
     }
 
+    @PatchMapping("/employees/{empId}/unlock")
+    public ResponseEntity<String> getUnAccLock(@PathVariable Long empId) {
+        empService.getAccUnlock(empId);
+        return ResponseEntity.ok("계정이 활성화되었습니다.");
+    }
 
 }

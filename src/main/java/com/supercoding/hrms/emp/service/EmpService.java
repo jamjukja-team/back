@@ -111,6 +111,7 @@ public class EmpService {
     @Transactional(readOnly = true)
     public Page<EmployeeSearchResponseDto> searchEmployees(EmployeeSearchRequestDto request, Pageable pageable) {
         Specification<Employee> spec = buildSearchSpec(request);
+        System.out.println(request);
         Page<Employee> page = employeeRepository.findAll(spec, pageable);
 
         // EMP_STATUS 그룹의 코드 목록을 조회한다.
@@ -142,16 +143,16 @@ public class EmpService {
             List<Predicate> predicates = new ArrayList<>();
 
             //부서 조건
-            if(request.getDeptFilterCd() != null && !"DEPT_ALL".equals(request.getDeptFilterCd())) {
+            if(request.getDeptId() != null && !"DEPT_ALL".equals(request.getDeptId())) {
                 predicates.add(//조건 추가
-                        cb.equal(root.get("department").get("deptId"), request.getDeptFilterCd())
+                        cb.equal(root.get("department").get("deptId"), request.getDeptId())
                 );
             }
 
             //직급 조건
-            if (request.getGradeFilterCd() != null && !"GRADE_ALL".equals(request.getGradeFilterCd())) {
+            if (request.getGradeId() != null && !"GRADE_ALL".equals(request.getGradeId())) {
                 predicates.add(
-                        cb.equal(root.get("grade").get("gradeId"), request.getGradeFilterCd())
+                        cb.equal(root.get("grade").get("gradeId"), request.getGradeId())
                 );
             }
             
@@ -204,7 +205,8 @@ public class EmpService {
                 employee.getPhone(),
                 employee.getEmail(),
                 employee.getAccountStatusCd(),
-                employee.getEmpStatusCd()
+                employee.getEmpStatusCd(),
+                employee.getBirthDate()
         );
     }
 
@@ -251,7 +253,8 @@ public class EmpService {
                 employee.getPhone(),
                 employee.getEmail(),
                 employee.getAccountStatusCd(),
-                employee.getEmpStatusCd()
+                employee.getEmpStatusCd(),
+                employee.getBirthDate()
         );
 
         return new EmployeeMetaDataResponseDto(commonMetadataService.getDepartments(), commonMetadataService.getGrades(), employeeDetailResponseDto);
