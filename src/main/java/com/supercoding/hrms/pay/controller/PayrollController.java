@@ -43,7 +43,7 @@ public class PayrollController {
     }
 
     // payDetail에 고정된 항목 이름들.
-    @GetMapping("/itmes")
+    @GetMapping("/items")
     public ResponseEntity<List<PayrollItem>> getPayrollItems(){
         return ResponseEntity.ok(payrollService.getPayrollItem());
     }
