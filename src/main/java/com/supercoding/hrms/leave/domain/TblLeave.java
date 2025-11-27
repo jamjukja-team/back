@@ -46,9 +46,9 @@ public class TblLeave {
     @Column(name = "leave_status")
     private String leaveStatus; //상태
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "emp_Id", nullable = false)
-    private Employee employee; //사번
+//    @ManyToOne(fetch = LAZY)
+//    @JoinColumn(name = "emp_Id", nullable = false)
+//    private Employee employee; //사번
 
     private Long empId;
 
