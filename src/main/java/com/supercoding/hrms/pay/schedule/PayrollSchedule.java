@@ -13,7 +13,7 @@ public class PayrollSchedule {
 
     private final PayrollService payrollService;
 
-    @Scheduled(cron = "0 0 0 1 1/1 ? *")
+    @Scheduled(cron = "0 0 0 1 * *")
     public void test(){
         payrollService.createPayroll();
     }
