@@ -14,5 +14,11 @@ public class LeaveType {
     private TblLeave leaveInfo;
     private TblFile fileInfo;
     private String empNm;
+    private Long empNo;
+
+    public LeaveType(TblLeave tblLeave, TblFile tblFile){
+        this.leaveInfo = tblLeave;
+        this.fileInfo = tblFile;
+    }
 
 }

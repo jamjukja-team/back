@@ -88,6 +88,9 @@ public class Employee {
     @Column(name= "up_emp_id",nullable = false, length = 4)
     private String upEmpId;
 
+    @Column(name = "remain_leave")
+    private Double remainLeave;
+
     public void updateEmployeeInfo(EmployeeUpdateRequestDto req) {
         if (req.getEmail() != null && !req.getEmail().isBlank() && !req.getEmail().equals(this.email)) {
             this.email = req.getEmail();

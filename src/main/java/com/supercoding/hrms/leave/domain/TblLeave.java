@@ -38,7 +38,7 @@ public class TblLeave {
     private String fileId; // 첨부파일 id
 
     @Column(name = "leave_duration")
-    private int leaveDuration; //휴가 기간
+    private Double leaveDuration; //휴가 기간
 
     @Column(name = "leave_status")
     private String leaveStatus; //상태
