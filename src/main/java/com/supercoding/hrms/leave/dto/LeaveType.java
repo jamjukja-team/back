@@ -15,6 +15,7 @@ public class LeaveType {
     private TblFile fileInfo;
     private String empNm;
     private Long empNo;
+    private String dg; //부서(department) / 직급(grade)
 
     public LeaveType(TblLeave tblLeave, TblFile tblFile){
         this.leaveInfo = tblLeave;

@@ -40,6 +40,7 @@ public class LeaveService {
         if(emp.isPresent()){
             leaveType.setEmpNm(emp.get().getEmpNm());
             leaveType.setEmpNo(emp.get().getEmpNo());
+            leaveType.setDg(emp.get().getDepartment() + "/" + emp.get().getGrade()); // "부서 / 직급" 이런 형식으로 저장
         }else{
             log.info("사원 정보가 없습니다 : {}", empId);
         }

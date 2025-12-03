@@ -47,6 +47,7 @@ public class TblLeave {
 //    @JoinColumn(name = "emp_Id", nullable = false)
 //    private Employee employee; //사번
 
+    @Column(name = "emp_id")
     private Long empId;
 
     @Column(name = "reject_reason")
