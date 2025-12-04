@@ -10,6 +10,7 @@ import com.supercoding.hrms.emp.entity.Employee;
 import com.supercoding.hrms.emp.repository.EmployeeRepository;
 import com.supercoding.hrms.emp.service.EmpService;
 import com.supercoding.hrms.pay.domain.*;
+import com.supercoding.hrms.pay.dto.PayrollMetaType;
 import com.supercoding.hrms.pay.dto.PayrollType;
 import com.supercoding.hrms.pay.repository.ItemNmRepository;
 import com.supercoding.hrms.pay.repository.PayRepository;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -149,7 +151,30 @@ public class PayrollService {
     }
 
     //R (단건 조회)
-    //급여 상세 조회 (직원/관리자 공통)
+    //급여 상세 조회 (사원)
+    //특정 payHistId 기준으로 급여명세서 세부 항목 조회
+    public PayrollType getPayrollEmp(String payMonth, Long empId) {
+        // 조회하고자 하는 Payroll의 id(histId)를 통해 조회하고자 하는 payroll 불러옴
+        List<Payroll> payrollList = payrollRepository.findByEmpId(empId);
+
+        if(payrollList.isEmpty()){
+            // 급여를 한번도 받은적이 없음
+            log.info("해당 사원의 급여 조회 내역이 없습니다.");
+            return null;
+        }else{
+            List<Payroll> filterPayrollList = payrollList.stream().filter(item -> item.getPayDate().startsWith(payMonth)).toList();
+            if(filterPayrollList.isEmpty()){
+                // 해당 달에 급여를 받은적이 없음
+                log.info("해당 달에 등록 된 내역이 없습니다.");
+                return null;
+            }else{
+                return setPayrollType(filterPayrollList.get(0));
+            }
+        }
+    }
+
+    //R (단건 조회)
+    //급여 상세 조회 (관리자)
     //특정 payHistId 기준으로 급여명세서 세부 항목 조회
     public PayrollType getPayroll(Long histId) {
         // 조회하고자 하는 Payroll의 id(histId)를 통해 조회하고자 하는 payroll 불러옴
@@ -217,6 +242,7 @@ public class PayrollService {
         PayrollType payrollType = new PayrollType(
                 empInfo.getEmpNm(),
                 empInfo.getDeptNm(),
+                empInfo.getGradeNm(),
                 getHour(empId,false),
                 getHour(empId,true),
                 calcPay(160, workPay, false),
@@ -267,7 +293,7 @@ public class PayrollService {
 
     //전체 사원 조회 받아서 이름별 필터링
     public List<Employee> filterByName(String nameId, List<Employee> employees){
-        return employees.stream().filter(item -> item.getEmpNm().equals(nameId)).toList();
+        return employees.stream().filter(item -> item.getEmpNm().contains(nameId)).toList(); // 이름 첫글자만 맞춰도 검색됨
     }
 
     public List<PayrollDetail> getDetails(Long empId){
@@ -333,5 +359,10 @@ public class PayrollService {
         return itemNmRepository.findAll();
     }
 
+    // 메타데이터 전부 불러오기
+    public PayrollMetaType getPayrollMeta(){
+        // 상태 메타데이터 + 급여 항목 메타데이터
+        return new PayrollMetaType(PayrollStatus.toKeyValueList(), itemNmRepository.findAll());
+    }
 
 }

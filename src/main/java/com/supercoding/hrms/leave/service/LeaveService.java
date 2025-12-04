@@ -192,7 +192,7 @@ public class LeaveService {
 
     //전체 사원 조회 받아서 이름별 필터링
     public List<Employee> filterByName(String nameId, List<Employee> employees){
-        return employees.stream().filter(item -> item.getEmpNm().equals(nameId)).toList();
+        return employees.stream().filter(item -> item.getEmpNm().contains(nameId)).toList(); // 직원 이름 부분만 맞아도 검색
     }
 
     // 5. Delete (단건)

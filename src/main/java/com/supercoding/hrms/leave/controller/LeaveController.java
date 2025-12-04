@@ -2,6 +2,7 @@ package com.supercoding.hrms.leave.controller;
 
 import com.supercoding.hrms.leave.domain.TblLeave;
 import com.supercoding.hrms.leave.domain.TblLeaveCommonCode;
+import com.supercoding.hrms.leave.dto.RejectRequest;
 import com.supercoding.hrms.leave.dto.SelectType;
 import com.supercoding.hrms.leave.repository.LeaveCommonCodeRepository;
 import com.supercoding.hrms.leave.service.LeaveService;
@@ -81,10 +82,10 @@ public class LeaveController {
     @PutMapping("/{leaveId}")
     public ResponseEntity<?> updateStatus(
             @PathVariable Long leaveId,
-            @RequestBody String reason,
+            @RequestBody RejectRequest reason,
             @RequestParam String status // 프론트에서 파라미터로 APPLY 혹은 REJECT 넘겨줘야 함.
     ) {
-        leaveService.updateStatus(leaveId, reason, status);
+        leaveService.updateStatus(leaveId, reason.getReason(), status);
         return ResponseEntity.ok("상태 업데이트 완료");
     }
 
