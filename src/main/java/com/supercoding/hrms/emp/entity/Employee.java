@@ -88,6 +88,9 @@ public class Employee {
     @Column(name= "up_emp_id",nullable = false, length = 4)
     private String upEmpId;
 
+    @Column(name = "remain_leave")
+    private Double remainLeave;
+
     @Column(name = "exit_reason", length = 200)
     private String exitReason;
 

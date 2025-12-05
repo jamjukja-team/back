@@ -15,6 +15,7 @@ public class PayrollType {
     private Long empId;                 // 직원 ID
     private String empName;             // 직원 이름
     private String deptName;            // 부서명
+    private String gradeName;       // 직급
     private Integer workHour;       // 총 근무시간
     private Integer overHour;       // 연장 근무시간
     private Integer workPay;        // 기본급
@@ -23,9 +24,10 @@ public class PayrollType {
     private String payDate; // 지급일
     private List<PayrollDetail> items;
 
-    public PayrollType(String empName, String deptName, Integer workHour, Integer overHour, Integer workPay, Integer overPay){
+    public PayrollType(String empName, String deptName, String gradeName, Integer workHour, Integer overHour, Integer workPay, Integer overPay){
         this.empName = empName;
         this.deptName = deptName;
+        this.gradeName = gradeName;
         this.workHour = workHour;
         this.overHour = overHour;
         this.workPay = workPay;

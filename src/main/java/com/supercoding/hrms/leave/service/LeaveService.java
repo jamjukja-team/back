@@ -8,12 +8,17 @@ import com.supercoding.hrms.leave.domain.TblLeave;
 import com.supercoding.hrms.leave.dto.LeaveType;
 import com.supercoding.hrms.leave.repository.FileRepository;
 import com.supercoding.hrms.leave.repository.LeaveRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.SecureRandom;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,15 +34,17 @@ public class LeaveService {
 
     private final EmployeeRepository employeeRepository;
 
-    private String getEmpNm(Long empId){
-        // 사원이름(empNm)을 가져오기 위함 LeaveType에 넣으려고
-        String empNm = "";
+    // 사원이름(empNm), 사번(empNo)을 가져오기 위함 LeaveType에 넣으려고
+    private LeaveType setEmpInfo(Long empId, LeaveType leaveType){
         Optional<Employee> emp = employeeRepository.findById(empId);
         if(emp.isPresent()){
-            empNm = emp.get().getEmpNm();
+            leaveType.setEmpNm(emp.get().getEmpNm());
+            leaveType.setEmpNo(emp.get().getEmpNo());
+            leaveType.setDg(emp.get().getDepartment() + "/" + emp.get().getGrade()); // "부서 / 직급" 이런 형식으로 저장
+        }else{
+            log.info("사원 정보가 없습니다 : {}", empId);
         }
-
-        return empNm;
+        return leaveType;
     }
 
     // 1. Create
@@ -58,20 +65,63 @@ public class LeaveService {
             );
             TblFile saveFile = fileRepository.save(tblFile);
 
+            Double duration = calcDuration(leave.getLeaveStartDate(), leave.getLeaveEndDate(), leave.getLeaveType()); // 휴가 기간 계산
+
             leave.setFileId(fileId);
             leave.setLeaveStatus("WAIT");
+            leave.setLeaveDuration(duration); // 휴가 기간 저장
+
             TblLeave saveLeave = leaveRepository.save(leave);
 
-            String empNm = getEmpNm(leave.getEmpId());
+            // 잔여 연차 업데이트
+            updateRemainLeave(leave.getEmpId(), duration, false);
 
-            return new LeaveType(saveLeave, saveFile, empNm);
+            LeaveType leaveType = new LeaveType(saveLeave, saveFile);
+
+            return setEmpInfo(leave.getEmpId(), leaveType);
         }else{
             leave.setLeaveStatus("WAIT");
             TblLeave saveLeave = leaveRepository.save(leave);
 
-            String empNm = getEmpNm(leave.getEmpId());
+            LeaveType leaveType = new LeaveType(saveLeave, null);
 
-            return new LeaveType(saveLeave, null, empNm);
+            return setEmpInfo(leave.getEmpId(), leaveType);
+        }
+    }
+
+    // 사원 정보를 한번에 불러서 남은 휴가 정보 업데이트
+    @Transactional
+    public void updateRemainLeave(Long empId, Double duration, Boolean isReject){
+        Optional<Employee> empInfo = employeeRepository.findById(empId);
+        if(empInfo.isPresent()){
+            Double remainLeave = empInfo.get().getRemainLeave();
+            if(!isReject){
+                empInfo.get().setRemainLeave(remainLeave - duration);
+            }else{
+                empInfo.get().setRemainLeave(remainLeave + duration);
+            }
+//            employeeRepository.save(empInfo.get());  // Transactional 때문에 자동 계산.
+        }else{
+            log.info("사원정보가 없습니다 : {}", empId);
+        }
+    }
+
+    // 잔여 연차 계산
+    public Double calcDuration(String startDate, String endDate, String leaveType){
+
+        if(leaveType.equals("AHL") || leaveType.equals("BHL")){ // 반차
+            return 0.5;
+        }else if(leaveType.equals("AL")){ // 연차
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+            LocalDate d1 = LocalDate.parse(startDate, formatter);
+            LocalDate d2 = LocalDate.parse(endDate, formatter);
+
+            long diff = d2.toEpochDay() - d1.toEpochDay();
+
+            return (double) diff;
+        }else{ // 병가, 경조
+            return 0.0;
         }
     }
 
@@ -81,11 +131,14 @@ public class LeaveService {
         String fileId = tblLeave!=null?tblLeave.getFileId():"";
         TblFile tblFile = fileId.isEmpty()?null:fileRepository.findById(fileId).orElse(null);
 
-        // 사원 이름 받는거
-        assert tblLeave != null;
-        String empNm = getEmpNm(tblLeave.getEmpId());
+        LeaveType leaveType = new LeaveType(tblLeave, tblFile);
 
-        return new LeaveType(tblLeave, tblFile, empNm);
+        if(tblLeave == null){
+            log.info("조회되는 휴가 정보가 없습니다");
+            return leaveType;
+        }else{
+            return setEmpInfo(tblLeave.getEmpId(), leaveType);
+        }
     }
 
     // 3. Read (목록)
@@ -94,6 +147,11 @@ public class LeaveService {
 
         if(roleType.equals("USER")){
             lists = lists.stream().filter(item -> item.getEmpId().equals(empId)).toList(); // 사원이 휴가내역을 볼경우 자신의 empId를 불러와서 자신의 것만 보여주게 해야 한다.
+        }else{
+            if (!roleType.equals("ADMIN")){
+                log.info("잘못된 유저 타입 기입");
+                return Collections.emptyList();
+            }
         }
 
         List<Employee> employeeList = employeeRepository.findAll();
@@ -134,7 +192,7 @@ public class LeaveService {
 
     //전체 사원 조회 받아서 이름별 필터링
     public List<Employee> filterByName(String nameId, List<Employee> employees){
-        return employees.stream().filter(item -> item.getEmpNm().equals(nameId)).toList();
+        return employees.stream().filter(item -> item.getEmpNm().contains(nameId)).toList(); // 직원 이름 부분만 맞아도 검색
     }
 
     // 5. Delete (단건)
@@ -162,6 +220,9 @@ public class LeaveService {
         LeaveType leaveType = read(leaveId);
         leaveType.getLeaveInfo().setLeaveStatus(status);
         leaveType.getLeaveInfo().setRejectReason(reason);
+
+        // 빠진 연차 반려로 다시 복구
+        updateRemainLeave(leaveType.getLeaveInfo().getEmpId(), leaveType.getLeaveInfo().getLeaveDuration(),true);
         leaveRepository.save(leaveType.getLeaveInfo());
     }
 
