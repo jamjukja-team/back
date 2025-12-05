@@ -88,6 +88,9 @@ public class Employee {
     @Column(name= "up_emp_id",nullable = false, length = 4)
     private String upEmpId;
 
+    @Column(name = "exit_reason", length = 200)
+    private String exitReason;
+
     public void updateEmployeeInfo(EmployeeUpdateRequestDto req) {
         if (req.getEmail() != null && !req.getEmail().isBlank() && !req.getEmail().equals(this.email)) {
             this.email = req.getEmail();
@@ -122,5 +125,11 @@ public class Employee {
 
     public void updatePhoto(String photo) {
         this.photo = photo;
+    }
+
+    public void retire(String reason, String registerId) {
+        this.empStatusCd = "RETIRED";
+        this.exitReason = reason;
+        this.upEmpId = registerId;
     }
 }

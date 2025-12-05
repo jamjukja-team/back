@@ -1,5 +1,7 @@
 package com.supercoding.hrms.auth.controller;
 
+import com.supercoding.hrms.auth.dto.request.InitResetPasswordRequestDto;
+import com.supercoding.hrms.auth.dto.request.ResetPasswordDto;
 import com.supercoding.hrms.auth.dto.response.AccessTokenResponseDto;
 import com.supercoding.hrms.auth.dto.request.LoginParamRequestDto;
 import com.supercoding.hrms.auth.dto.response.LoginParamResponseDto;
@@ -13,10 +15,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Fetch;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+// 이메일 주소
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/auth")
@@ -74,12 +75,17 @@ public class AuthController {
         return ResponseEntity.ok("로그아웃이 성공적으로 완료되었습니다.");
     }
 
-    @PatchMapping("/set-password/reset")
-    public ResponseEntity<String> resetPassword(@RequestBody SetPasswordRequestDto request) {
-        authService.createResetToken();
+    @PostMapping("/set-password/reset")
+    public ResponseEntity<String> initResetPassword(@RequestBody InitResetPasswordRequestDto request) {
+        authService.initResetPassword(request);
 
-        return  null;
+        return ResponseEntity.ok("비밀번호 초기화 메일 전송에 성공했습니다.");
     }
 
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody @Valid ResetPasswordDto request) {
+        authService.resetPassword(request);
+        return ResponseEntity.ok("비밀번호가 초기화되었습니다.");
+    }
 
 }

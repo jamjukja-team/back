@@ -22,6 +22,7 @@ public enum CustomMessage {
     FAIL_TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
     FAIL_ACCESS_TOKEN_REQUIRED(HttpStatus.UNAUTHORIZED, "액세스 토큰이 필요합니다."),
     FAIL_REFRESH_TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "유효하지 않은 리프래시 토큰입니다."),
+    TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
 
     FAIL_ACCOUNT_STATUS_CODE_NOT_FOUND(HttpStatus.BAD_REQUEST, "계정 비활성화 코드(ACCOUNT_STATUS/DISABLE)를 찾을 수 없습니다."),
     FAIL_EMAIL_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 이메일의 사용자를 찾을 수 없습니다."),

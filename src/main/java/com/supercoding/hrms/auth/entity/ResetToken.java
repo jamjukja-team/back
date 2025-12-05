@@ -30,7 +30,14 @@ public class ResetToken {
     @Column(name = "used", nullable = false)
     private Boolean used;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    public ResetToken(String token, Employee employee, LocalDateTime expiresAt) {
+        this.employee = employee;
+        this.resetToken = token;
+        this.expiresAt = expiresAt;
+        this.used = false;
+    }
 
+    public void markUsed() {
+        this.used = true;
+    }
 }

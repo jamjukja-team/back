@@ -1,6 +1,7 @@
 package com.supercoding.hrms.emp.controller;
 
 
+import com.supercoding.hrms.emp.dto.request.EmployeeRetireRequestDto;
 import com.supercoding.hrms.emp.dto.request.EmployeeSaveRequestDto;
 import com.supercoding.hrms.emp.dto.request.EmployeeSearchRequestDto;
 import com.supercoding.hrms.emp.dto.request.EmployeeUpdateRequestDto;
@@ -35,7 +36,6 @@ public class EmpController {
 
     @GetMapping("/employees/{empId}/metadata")
     public EmployeeMetaDataResponseDto getEmployeeMetadata(@PathVariable Long empId) {
-
         return empService.getEmployeeMetadata(empId);
     }
 
@@ -52,10 +52,6 @@ public class EmpController {
 
     @PatchMapping("/employees/update")
     public ResponseEntity<EmployeeUpdateResponseDto> updateEmployee(@RequestPart("data") @Valid EmployeeUpdateRequestDto req, @RequestPart(value = "file", required = true) MultipartFile photo) {
-        System.out.println("===============");
-        System.out.println(req);
-        System.out.println(photo);
-        System.out.println("===============");
         return ResponseEntity.ok(empService.updateEmployee(req, photo));
     }
 
@@ -65,4 +61,9 @@ public class EmpController {
         return ResponseEntity.ok("계정이 활성화되었습니다.");
     }
 
+    @PatchMapping("/employees/{empId}/retire")
+    public ResponseEntity<String> retireEmployee(@PathVariable Long empId, @RequestBody EmployeeRetireRequestDto request) {
+        empService.retireEmployee(empId, request);
+        return ResponseEntity.ok("퇴직 처리가 완료되었습니다.");
+    }
 }

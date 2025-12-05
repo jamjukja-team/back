@@ -14,7 +14,7 @@ INSERT INTO com_detail (com_cd, com_group_cd, com_nm, in_emp_id, up_emp_id, crea
 VALUES
 ('ACTIVE', 'EMP_STATUS', '재직', '0000', '0000', NOW(), NOW()),
 ('LEAVE', 'EMP_STATUS', '휴직', '0000', '0000', NOW(), NOW()),
-('RESIGN', 'EMP_STATUS', '퇴사', '0000', '0000', NOW(), NOW()),
+('RETIRED', 'EMP_STATUS', '퇴사', '0000', '0000', NOW(), NOW()),
 
 ('NORMAL', 'ACCOUNT_STATUS', '정상', '0000', '0000', NOW(), NOW()),
 ('LOCK', 'ACCOUNT_STATUS', '잠금', '0000', '0000', NOW(), NOW()),

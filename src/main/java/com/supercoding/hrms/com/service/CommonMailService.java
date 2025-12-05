@@ -29,4 +29,7 @@ public class CommonMailService {
     public String getInitialPasswordUrl(String email) {
         return frontendBaseUrl + "/set-password?email=" + email;
     }
+    public String getInitialPasswordUrl(String email, String token) {
+        return frontendBaseUrl + "/reset-password?email=" + email + "&token=" + token;
+    }
 }

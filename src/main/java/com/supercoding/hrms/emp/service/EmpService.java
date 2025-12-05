@@ -11,6 +11,7 @@ import com.supercoding.hrms.com.repository.GradeRepository;
 import com.supercoding.hrms.com.service.CommonMailService;
 import com.supercoding.hrms.com.service.CommonMetadataService;
 import com.supercoding.hrms.com.service.CommonUploadService;
+import com.supercoding.hrms.emp.dto.request.EmployeeRetireRequestDto;
 import com.supercoding.hrms.emp.dto.request.EmployeeSaveRequestDto;
 import com.supercoding.hrms.emp.dto.request.EmployeeSearchRequestDto;
 import com.supercoding.hrms.emp.dto.request.EmployeeUpdateRequestDto;
@@ -79,7 +80,7 @@ public class EmpService {
                 .upEmpId(req.getRegisterId())
                 .build());
         
-        sendMail(employee.getEmail() , commonMailService.getInitialPasswordUrl(employee.getEmail()));
+        sendMail(employee.getEmail(), commonMailService.getInitialPasswordUrl(employee.getEmail()));
 
         return new EmployeeSaveResponseDto(employee);
     }
@@ -111,7 +112,6 @@ public class EmpService {
     @Transactional(readOnly = true)
     public Page<EmployeeSearchResponseDto> searchEmployees(EmployeeSearchRequestDto request, Pageable pageable) {
         Specification<Employee> spec = buildSearchSpec(request);
-        System.out.println(request);
         Page<Employee> page = employeeRepository.findAll(spec, pageable);
 
         // EMP_STATUS 그룹의 코드 목록을 조회한다.
@@ -237,6 +237,15 @@ public class EmpService {
         employee.setAccountStatusCd(disableCode.getComCd());
     }
 
+    @Transactional
+    public void retireEmployee(Long empId, EmployeeRetireRequestDto request) {
+        Employee employee = employeeRepository.findById(empId)
+                .orElseThrow(() -> new CustomException(CustomMessage.EMPLOYEE_NOT_FOUND));
+
+        // 퇴직 처리
+        employee.retire(request.getReason(), request.getRegisterId());
+    }
+
     public EmployeeMetaDataResponseDto getEmployeeMetadata(Long empId) {
         Employee employee = employeeRepository.findById(empId).orElseThrow(() -> new CustomException(CustomMessage.FAIL_USER_NOT_FOUND));
 
@@ -265,15 +274,10 @@ public class EmpService {
         Employee employee = employeeRepository.findById(req.getEmpId())
                 .orElseThrow(() -> new CustomException(CustomMessage.EMPLOYEE_NOT_FOUND));
 
-        System.out.println("====test1=========");
-        System.out.println(req);
-        System.out.println(photo);
-        System.out.println("====test2=========");
-
         if (photo != null && !photo.isEmpty()) {
             employee.updatePhoto(commonUploadService.uploadFile(photo, "employee/photos"));
         }
-        System.out.println("====test3=========");
+
         // --- 부서 업데이트 ---
         if (req.getDeptId() != null && !req.getDeptId().isBlank()) {
             Department department = departmentRepository.findById(req.getDeptId())
@@ -281,7 +285,7 @@ public class EmpService {
 
             employee.updateDepartment(department);
         }
-        System.out.println("====test4=========");
+
         // --- 직급 업데이트 ---
         if (req.getGradeId() != null && !req.getGradeId().isBlank()) {
             Grade grade = gradeRepository.findById(req.getGradeId())
@@ -289,9 +293,9 @@ public class EmpService {
 
             employee.updateGrade(grade);
         }
-        System.out.println("====test5=========");
+
         employee.updateEmployeeInfo(req);
-        System.out.println("====test6=========");
+
         return EmployeeUpdateResponseDto.builder()
                 .empId(employee.getEmpId())
                 .empNo(employee.getEmpNo())
@@ -309,4 +313,6 @@ public class EmpService {
                 .updateAt(String.valueOf(employee.getUpdateAt())).build();
 
     }
+
+
 }
