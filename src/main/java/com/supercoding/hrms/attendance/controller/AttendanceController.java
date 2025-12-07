@@ -1,9 +1,11 @@
 package com.supercoding.hrms.attendance.controller;
 
+import com.supercoding.hrms.attendance.dto.response.MonthlyAttendanceResponseDto;
 import com.supercoding.hrms.attendance.dto.request.create.CreateAttendanceRequestDto;
 import com.supercoding.hrms.attendance.dto.request.read.ReadAttendanceRequestDto;
 import com.supercoding.hrms.attendance.dto.request.update.GetOffAttendanceRequestDto;
 import com.supercoding.hrms.attendance.dto.response.AttendanceResponseDto;
+import com.supercoding.hrms.attendance.dto.response.GetOffAttendanceResponseDto;
 import com.supercoding.hrms.attendance.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,28 +19,21 @@ import java.util.List;
 public class AttendanceController {
     private final AttendanceService attendanceService;
 
-    @PostMapping
+    @PostMapping                            //출근
     public ResponseEntity<AttendanceResponseDto> create(@RequestBody CreateAttendanceRequestDto request) {
         AttendanceResponseDto response = attendanceService.create(request);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping
-    public ResponseEntity<List<AttendanceResponseDto>> getAll(@ModelAttribute ReadAttendanceRequestDto request) {
-        List<AttendanceResponseDto> responses = attendanceService.findAll(request);
-        return ResponseEntity.ok(responses);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<AttendanceResponseDto> getOne(@PathVariable Long id) {
-        AttendanceResponseDto response = attendanceService.findById(id);
+    @PatchMapping("/{attendanceId}")                    //퇴근
+    public ResponseEntity<GetOffAttendanceResponseDto> getOff(@PathVariable Long attendanceId,
+                                                              @RequestBody GetOffAttendanceRequestDto request) {
+        GetOffAttendanceResponseDto response = attendanceService.getOff(attendanceId, request);
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Boolean> getOff(@PathVariable Long id,
-                                          @RequestBody GetOffAttendanceRequestDto request) {
-        attendanceService.getOff(id, request);
-        return ResponseEntity.ok(true);
+    @GetMapping("/{empId}/monthly")                    //한 사람 전체 조회
+    public ResponseEntity<MonthlyAttendanceResponseDto> getOne(@PathVariable Long empId, @RequestParam String yyyymm) {
+        return ResponseEntity.ok(attendanceService.findById(empId, yyyymm));
     }
 }

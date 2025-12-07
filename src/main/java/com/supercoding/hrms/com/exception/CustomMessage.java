@@ -30,7 +30,10 @@ public enum CustomMessage {
     FAIL_FILE_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드 중 오류가 발생했습니다."),
     EMPLOYEE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사원을 찾을 수 없습니다."),
     DEPARTMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 부서를 찾을 수 없습니다."),
-    GRADE_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 직급을 찾을 수 없습니다.")
+    GRADE_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 직급을 찾을 수 없습니다."),
+
+    NO_ATTENDANCE_FOR_CHECKOUT(HttpStatus.NOT_FOUND,"출근 기록이 없어 퇴근 처리를 진행할 수 없습니다.");
+
     ;
 
     private final HttpStatus httpStatus;

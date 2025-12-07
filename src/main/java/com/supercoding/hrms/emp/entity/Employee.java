@@ -1,5 +1,6 @@
 package com.supercoding.hrms.emp.entity;
 
+import com.supercoding.hrms.attendance.domain.Attendance;
 import com.supercoding.hrms.com.entity.Department;
 import com.supercoding.hrms.com.entity.Grade;
 import com.supercoding.hrms.emp.dto.request.EmployeeUpdateRequestDto;
@@ -11,6 +12,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "employee", uniqueConstraints = {
@@ -57,6 +59,9 @@ public class Employee {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "grade_id")
     private Grade grade;
+
+    @OneToMany(mappedBy = "employee")
+    private List<Attendance> attendanceList;
 
     @Builder.Default
     @Column(name = "role_cd", length = 10, columnDefinition = "varchar(10) default 'USER'")

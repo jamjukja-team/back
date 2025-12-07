@@ -11,22 +11,11 @@ import java.time.LocalDateTime;
 public class AttendanceResponseDto {
     private Long attendanceId;
     private Long empId;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private Boolean isOverTime;
-    private LocalDateTime createdAt;
-    private Long createdBy;
-    private LocalDateTime updatedAt;
-    private Long updatedBy;
+    private String startTime;
 
     public AttendanceResponseDto(Attendance attendance) {
         this.attendanceId = attendance.getAttendanceId();
-        this.empId = attendance.getEmpId();
-        this.startTime = attendance.getStartTime();
-        this.endTime = attendance.getEndTime();
-        this.createdAt = attendance.getCreatedAt();
-        this.createdBy = attendance.getCreatedBy();
-        this.updatedAt = attendance.getUpdatedAt();
-        this.updatedBy = attendance.getUpdatedBy();
+        this.empId = attendance.getEmployee().getEmpId();
+        this.startTime = String.valueOf(attendance.getStartTime());
     }
 }

@@ -12,20 +12,22 @@ import java.util.List;
 
 public interface AttendanceJpaRepository extends JpaRepository<Attendance, Long>, AttendanceRepository {
 
-    @Query("SELECT a FROM Attendance a WHERE " +
-            "(:empId IS NULL OR a.empId = :empId) AND " +
-            "(:startTime IS NULL OR a.startTime >= :startTime) AND " +
-            "(:endTime IS NULL OR a.endTime <= :endTime)")
+    @Query("""
+            SELECT a FROM Attendance a
+            WHERE (:id IS NULL OR a.employee.empId = :id)
+              AND (:startTime IS NULL OR a.startTime >= :startTime)
+              AND (:endTime IS NULL OR a.endTime IS NULL OR a.endTime <= :endTime)
+            """)
     List<Attendance> findByConditions(
-            @Param("empId") Long empId,
+            @Param("id") Long empId,
             @Param("startTime") LocalDateTime startTime,
             @Param("endTime") LocalDateTime endTime
     );
-
-    @Query("SELECT a.empId FROM Attendance a WHERE a.empId IN :ids")
-    List<Long> findExistingIds(@Param("ids") Collection<Long> ids);
-
-    @Query("DELETE FROM Attendance a WHERE a.attendanceId IN :ids")
-    @Modifying
-    void deleteByIds(@Param("ids") Collection<Long> ids);
+//
+//    @Query("SELECT a.empId FROM Attendance a WHERE a.empId IN :ids")
+//    List<Long> findExistingIds(@Param("ids") Collection<Long> ids);
+//
+//    @Query("DELETE FROM Attendance a WHERE a.attendanceId IN :ids")
+//    @Modifying
+//    void deleteByIds(@Param("ids") Collection<Long> ids);
 }

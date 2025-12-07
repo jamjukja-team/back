@@ -10,21 +10,5 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CreateAttendanceRequestDto {
     private Long empId;
-    private LocalDateTime startTime;
-    private Long createdBy;
-
-    public CreateAttendanceRequestDto(Long empId, LocalDateTime startTime, Long createdBy) {
-        this.empId = empId;
-        this.startTime = startTime;
-        if (createdBy == null) {
-            this.createdBy = 0L;
-        }
-        this.createdBy = createdBy;
-    }
-
-    public Attendance of() {
-        return new Attendance(
-                empId, startTime, createdBy
-        );
-    }
+    private String startTime;
 }

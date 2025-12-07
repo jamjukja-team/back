@@ -8,7 +8,5 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class ReadAttendanceRequestDto {
-    private Long empId;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+
 }
