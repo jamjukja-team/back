@@ -5,7 +5,9 @@ INSERT INTO com_group (com_group_cd, group_nm, in_emp_id, up_emp_id, create_at, 
 VALUES
 ('EMP_STATUS', '사원상태', '0000', '0000', NOW(), NOW()),
 ('ACCOUNT_STATUS', '계정상태', '0000', '0000', NOW(), NOW()),
-('USE_STATUS', '사용여부', '0000', '0000', NOW(), NOW());
+('USE_STATUS', '사용여부', '0000', '0000', NOW(), NOW()),
+('LEAVE_TYPE', '휴가유형', '0000', '0000', NOW(), NOW()),
+('LEAVE_STATUS', '휴가상태', '0000', '0000', NOW(), NOW());
 
 -- ================================
 -- 공통 상세 (COM_DETAIL)
@@ -21,7 +23,12 @@ VALUES
 ('DORMANT', 'ACCOUNT_STATUS', '휴면', '0000', '0000', NOW(), NOW()),
 
 ('Y', 'USE_STATUS', '사용', '0000', '0000', NOW(), NOW()),
-('N', 'USE_STATUS', '미사용', '0000', '0000', NOW(), NOW());
+('N', 'USE_STATUS', '미사용', '0000', '0000', NOW(), NOW()),
+('AL',  'LEAVE_TYPE', '연차',      '0000','0000',NOW(),NOW()),
+('BHL', 'LEAVE_TYPE', '오전반차',  '0000','0000',NOW(),NOW()),
+('AHL', 'LEAVE_TYPE', '오후반차',  '0000','0000',NOW(),NOW()),
+('SL',  'LEAVE_TYPE', '병가',      '0000','0000',NOW(),NOW()),
+('EL',  'LEAVE_TYPE', '경조',      '0000','0000',NOW(),NOW());
 
 -- ================================
 -- 부서 (DEPARTMENT)

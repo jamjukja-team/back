@@ -26,6 +26,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AccessTokenResponseDto> login(@RequestBody @Valid LoginParamRequestDto req, HttpServletResponse response) {
+        //코드 최적화 필요
         LoginParamResponseDto tokens = authService.login(req);
 
         Cookie refreshCookie = new Cookie("refreshToken", tokens.getRefreshToken());
@@ -34,7 +35,7 @@ public class AuthController {
         refreshCookie.setMaxAge(7 * 24 * 60 * 60);//7일
         response.addCookie(refreshCookie);
 
-        return ResponseEntity.ok(new AccessTokenResponseDto(tokens.getAccessToken(), tokens.getRoleCd(), tokens.getEmpId(), tokens.getEmpNo()));
+        return ResponseEntity.ok(new AccessTokenResponseDto(tokens.getAccessToken(), tokens.getRoleCd(), tokens.getEmpId(), tokens.getEmpNo(), tokens.getEmpNm()));
     }
 
     @PatchMapping("/set-password")

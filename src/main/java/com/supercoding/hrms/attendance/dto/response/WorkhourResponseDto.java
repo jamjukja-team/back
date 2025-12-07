@@ -16,14 +16,4 @@ public class WorkhourResponseDto {
     private Long overtimeHour;
     private Long overtimeMinute;
 
-    public WorkhourResponseDto(Workhour workhour) {
-        this.id = workhour.getWorkhourId();
-        this.empId = workhour.getEmpId();
-        this.attendanceId = workhour.getAttendanceId();
-        this.hour = workhour.getHour();
-        this.minute = workhour.getMinute();
-        this.isOvertime = workhour.getIsOvertime();
-        this.overtimeHour = workhour.getOvertimeHour();
-        this.overtimeMinute = workhour.getOvertimeMinute();
-    }
 }

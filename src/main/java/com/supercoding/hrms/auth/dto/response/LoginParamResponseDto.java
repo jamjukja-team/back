@@ -11,5 +11,6 @@ public class LoginParamResponseDto {
     private String roleCd;
     private Long empId;
     private Long empNo;
+    private String empNm;
 
 }

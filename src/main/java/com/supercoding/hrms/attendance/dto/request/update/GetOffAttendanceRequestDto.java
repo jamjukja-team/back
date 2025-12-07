@@ -8,6 +8,5 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class GetOffAttendanceRequestDto {
-    private LocalDateTime endTime;
-    private Long updateBy;
+    private String endTime;
 }

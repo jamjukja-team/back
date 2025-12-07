@@ -17,25 +17,27 @@ import java.util.List;
 public class WorkhourServiceImpl implements WorkhourService {
 
     private final WorkhourRepository workhourRepository;
+
     @Override
     public List<WorkhourResponseDto> getWorkhours(ReadWorkhoursRequestDto request) {
-        List<Workhour> workhours = workhourRepository.findByConditions(
-                request.getEmpId(),
-                request.getAttendanceId(),
-                request.getIsOvertime()
-        );
-
-        return workhours.stream().map(
-                WorkhourResponseDto::new
-        ).toList();
+//        List<Workhour> workhours = workhourRepository.findByConditions(
+//                request.getEmpId(),
+//                request.getAttendanceId(),
+//                request.getIsOvertime()
+//        );
+//
+//        return workhours.stream().map(
+//                WorkhourResponseDto::new
+//        ).toList();
+        return null;
     }
 
     @Override
     public WorkhourResponseDto getWorkhourById(Long id) {
-        Workhour workhour = workhourRepository.findById(id).orElseThrow(
-                // 익셉션 처리
-        );
+//        Workhour workhour = workhourRepository.findById(id).orElseThrow(
+//                // 익셉션 처리
+//        );
 
-        return new WorkhourResponseDto(workhour);
+        return null;//new WorkhourResponseDto(workhour);
     }
 }
