@@ -26,7 +26,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
+import static com.supercoding.hrms.pay.domain.PayrollStatus.CALCULATING;
 
 @Slf4j
 @Service
@@ -45,6 +50,46 @@ public class PayrollService {
 
     private final WorkhourService workhourService;
     private final EmployeeRepository employeeRepository;
+
+
+    public void testCreate(){
+        testSaveEmpPay(7L);
+        testSaveEmpPay(8L);
+        testSaveEmpPay(9L);
+        testSaveEmpPay(10L);
+        testSaveEmpPay(11L);
+    }
+
+    public void testSaveEmpPay(Long empId){
+        Payroll payroll = new Payroll(
+                null,
+                empId,
+                "CALCULATING",
+                "20251208"
+        );
+
+        payrollRepository.save(payroll);
+
+        PayrollDetail payrollDetail1 = new PayrollDetail(
+                null,
+                empId,
+                "BASIC",
+                50000,
+                ""
+        );
+
+        PayrollDetail payrollDetail2 = new PayrollDetail(
+                null,
+                empId,
+                "TAX",
+                10000,
+                ""
+        );
+
+        List<PayrollDetail> payrollDetailList = Arrays.asList(payrollDetail1, payrollDetail2);
+        payrollDetailRepository.saveAll(payrollDetailList);
+    }
+
 
     /**
      * resources/payroll-data.json 파일을 읽어서 DB에 저장

@@ -29,6 +29,12 @@ public class PayrollController {
 //        payrollService.loadPayrollFromJson();
 //    }
 
+    // testCreate
+    @PostMapping
+    public void testCreate(){
+        payrollService.testCreate();
+    }
+
     //R (Read)
     //특정 급여 이력 상세 조회(직원용)
     @GetMapping("/{id}")
