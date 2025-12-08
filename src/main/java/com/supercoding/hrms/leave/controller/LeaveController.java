@@ -30,15 +30,15 @@ public class LeaveController {
 
     // Create
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> create(@RequestPart("leave") String leaveJson, @RequestPart(value = "file", required = false) MultipartFile file) {
-        ObjectMapper mapper = new ObjectMapper();
-        TblLeave leave = null;
-        try {
-            leave = mapper.readValue(leaveJson, TblLeave.class);
-        } catch (JsonProcessingException e) {
-            log.error("타입 변환 이슈 : {}",e.getMessage());
-            throw new RuntimeException(e);
-        }
+    public ResponseEntity<?> create(@RequestPart("leave") TblLeave leave, @RequestPart(value = "file", required = false) MultipartFile file) {
+//        ObjectMapper mapper = new ObjectMapper();
+//        TblLeave leave = null;
+//        try {
+//            leave = mapper.readValue(leaveJson, TblLeave.class);
+//        } catch (JsonProcessingException e) {
+//            log.error("타입 변환 이슈 : {}",e.getMessage());
+//            throw new RuntimeException(e);
+//        }
         return ResponseEntity.ok(leaveService.create(leave, file));
     }
 
