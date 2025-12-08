@@ -1,5 +1,7 @@
 package com.supercoding.hrms.leave.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.supercoding.hrms.leave.domain.TblLeave;
 import com.supercoding.hrms.leave.domain.TblLeaveCommonCode;
 import com.supercoding.hrms.leave.dto.RejectRequest;
@@ -7,6 +9,7 @@ import com.supercoding.hrms.leave.dto.SelectType;
 import com.supercoding.hrms.leave.repository.LeaveCommonCodeRepository;
 import com.supercoding.hrms.leave.service.LeaveService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/leave")
 @RequiredArgsConstructor //생성자 자동 주입
+@Slf4j
 public class LeaveController {
     // 프론트와 통신하는 역할 (CRUD 구현 -> API로 받아서 서비스한테 넘기는거)
 
@@ -26,7 +30,15 @@ public class LeaveController {
 
     // Create
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> create(@RequestPart("leave") TblLeave leave, @RequestPart(value = "file", required = false) MultipartFile file) {
+    public ResponseEntity<?> create(@RequestPart("leave") String leaveJson, @RequestPart(value = "file", required = false) MultipartFile file) {
+        ObjectMapper mapper = new ObjectMapper();
+        TblLeave leave = null;
+        try {
+            leave = mapper.readValue(leaveJson, TblLeave.class);
+        } catch (JsonProcessingException e) {
+            log.error("타입 변환 이슈 : {}",e.getMessage());
+            throw new RuntimeException(e);
+        }
         return ResponseEntity.ok(leaveService.create(leave, file));
     }
 

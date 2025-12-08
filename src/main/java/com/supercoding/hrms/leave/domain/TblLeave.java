@@ -43,10 +43,6 @@ public class TblLeave {
     @Column(name = "leave_status")
     private String leaveStatus; //상태
 
-//    @ManyToOne(fetch = LAZY)
-//    @JoinColumn(name = "emp_Id", nullable = false)
-//    private Employee employee; //사번
-
     @Column(name = "emp_id")
     private Long empId;
 
