@@ -12,6 +12,9 @@ import com.supercoding.hrms.emp.repository.EmployeeRepository;
 import com.supercoding.hrms.leave.domain.TblLeave;
 import com.supercoding.hrms.leave.repository.LeaveRepository;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -204,14 +207,33 @@ public class AdminAttendanceService {
     }
 
     private Specification<Employee> deptEq(String deptId) {
-        return (root, query, cb) ->
-                deptId == null ? null : cb.equal(root.get("department").get("deptId"), deptId);
+        return (Root<Employee> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
+
+            final String ALL = "DEPT_ALL";
+
+            // deptId가 null이거나 ALL이면 필터를 적용하지 않음
+            if (deptId == null || ALL.equals(deptId)) {
+                return null;
+            }
+
+            return cb.equal(root.get("department").get("deptId"), deptId);
+        };
     }
 
     private Specification<Employee> gradeEq(String gradeId) {
-        return (root, query, cb) ->
-                gradeId == null ? null : cb.equal(root.get("grade").get("gradeId"), gradeId);
+        return (Root<Employee> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
+
+            // 지역 변수로 정의
+            final String ALL = "GRADE_ALL";
+
+            if (gradeId == null || ALL.equals(gradeId)) {
+                return null;
+            }
+
+            return cb.equal(root.get("grade").get("gradeId"), gradeId);
+        };
     }
+
 
     private Specification<Employee> nameContains(String name) {
         return (root, query, cb) ->
