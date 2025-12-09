@@ -65,14 +65,14 @@ INSERT INTO employee (
     emp_no, emp_nm, birth_date, email, password,
     phone, photo, hire_date, dept_id, grade_id,
     role_cd, account_status_cd, emp_status_cd,
-    in_emp_id, up_emp_id, create_at, update_at
+    in_emp_id, up_emp_id, remain_leave, create_at, update_at
 )
 VALUES
 (1000, '관리자', '1990-01-01', 'admin@test.com',
  '$2a$10$7kBYcQnCzsS3YTUKNWO86eB9Kkp5S5eP0aWdyaKmLwEyGnTw3.dc.',
  '010-9999-9999', '', '2024-01-01', 'D001', 'G5',
  'ADMIN', 'NORMAL', 'ACTIVE',
- '0000', '0000', NOW(), NOW());
+ '0000', '0000', 15, NOW(), NOW());
 
 -- ================================
 -- 일반 사원 10명 (1001 ~ 1010)
@@ -82,15 +82,15 @@ INSERT INTO employee (
     emp_no, emp_nm, birth_date, email, password,
     phone, photo, hire_date, dept_id, grade_id,
     role_cd, account_status_cd, emp_status_cd,
-    in_emp_id, up_emp_id, create_at, update_at
+    in_emp_id, up_emp_id, remain_leave, create_at, update_at
 ) VALUES
-(1001, '홍길동1', '1995-05-10', 'hong1@test.com', '$2a$10$7kBYcQnCzsS3YTUKNWO86eB9Kkp5S5eP0aWdyaKmLwEyGnTw3.dc.', '010-1111-1001', '', '2024-01-05', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', NOW(), NOW()),
-(1002, '홍길동2', '1994-04-12', 'hong2@test.com', '$2a$10$sawUeZA9T6nCJt7uu6VwL.jT.yXmwLRgvr6I0wl.ff84GNjw6XNua', '010-1111-1002', '', '2024-01-06', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', NOW(), NOW()),
-(1003, '홍길동3', '1993-03-20', 'hong3@test.com', '$2a$10$sawUeZA9T6nCJt7uu6VwL.jT.yXmwLRgvr6I0wl.ff84GNjw6XNua', '010-1111-1003', '', '2024-01-07', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', NOW(), NOW()),
-(1004, '홍길동4', '1992-01-15', 'hong4@test.com', '$2a$10$sawUeZA9T6nCJt7uu6VwL.jT.yXmwLRgvr6I0wl.ff84GNjw6XNua', '010-1111-1004', '', '2024-01-08', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', NOW(), NOW()),
-(1005, '홍길동5', '1991-11-21', 'hong5@test.com', '$2a$10$sawUeZA9T6nCJt7uu6VwL.jT.yXmwLRgvr6I0wl.ff84GNjw6XNua', '010-1111-1005', '', '2024-01-09', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', NOW(), NOW()),
-(1006, '홍길동6', '1990-09-18', 'hong6@test.com', '$2a$10$sawUeZA9T6nCJt7uu6VwL.jT.yXmwLRgvr6I0wl.ff84GNjw6XNua', '010-1111-1006', '', '2024-01-10', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', NOW(), NOW()),
-(1007, '홍길동7', '1989-08-08', 'hong7@test.com', '$2a$10$sawUeZA9T6nCJt7uu6VwL.jT.yXmwLRgvr6I0wl.ff84GNjw6XNua', '010-1111-1007', '', '2024-01-11', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', NOW(), NOW()),
-(1008, '홍길동8', '1988-07-17', 'hong8@test.com', '$2a$10$sawUeZA9T6nCJt7uu6VwL.jT.yXmwLRgvr6I0wl.ff84GNjw6XNua', '010-1111-1008', '', '2024-01-12', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', NOW(), NOW()),
-(1009, '홍길동9', '1987-06-24', 'hong9@test.com', '$2a$10$sawUeZA9T6nCJt7uu6VwL.jT.yXmwLRgvr6I0wl.ff84GNjw6XNua', '010-1111-1009', '', '2024-01-13', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', NOW(), NOW()),
-(1010, '홍길동10', '1986-05-30', 'hong10@test.com', '$2a$10$sawUeZA9T6nCJt7uu6VwL.jT.yXmwLRgvr6I0wl.ff84GNjw6XNua', '010-1111-1010', '', '2024-01-14', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', NOW(), NOW());
+(1001, '홍길동1', '1995-05-10', 'hong1@test.com', '$2a$10$7kBYcQnCzsS3YTUKNWO86eB9Kkp5S5eP0aWdyaKmLwEyGnTw3.dc.', '010-1111-1001', '', '2024-01-05', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', 15, NOW(), NOW()),
+(1002, '홍길동2', '1994-04-12', 'hong2@test.com', '$2a$10$sawUeZA9T6nCJt7uu6VwL.jT.yXmwLRgvr6I0wl.ff84GNjw6XNua', '010-1111-1002', '', '2024-01-06', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', 15, NOW(), NOW()),
+(1003, '홍길동3', '1993-03-20', 'hong3@test.com', '$2a$10$sawUeZA9T6nCJt7uu6VwL.jT.yXmwLRgvr6I0wl.ff84GNjw6XNua', '010-1111-1003', '', '2024-01-07', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', 15, NOW(), NOW()),
+(1004, '홍길동4', '1992-01-15', 'hong4@test.com', '$2a$10$sawUeZA9T6nCJt7uu6VwL.jT.yXmwLRgvr6I0wl.ff84GNjw6XNua', '010-1111-1004', '', '2024-01-08', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', 15, NOW(), NOW()),
+(1005, '홍길동5', '1991-11-21', 'hong5@test.com', '$2a$10$sawUeZA9T6nCJt7uu6VwL.jT.yXmwLRgvr6I0wl.ff84GNjw6XNua', '010-1111-1005', '', '2024-01-09', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', 15, NOW(), NOW()),
+(1006, '홍길동6', '1990-09-18', 'hong6@test.com', '$2a$10$sawUeZA9T6nCJt7uu6VwL.jT.yXmwLRgvr6I0wl.ff84GNjw6XNua', '010-1111-1006', '', '2024-01-10', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', 15, NOW(), NOW()),
+(1007, '홍길동7', '1989-08-08', 'hong7@test.com', '$2a$10$sawUeZA9T6nCJt7uu6VwL.jT.yXmwLRgvr6I0wl.ff84GNjw6XNua', '010-1111-1007', '', '2024-01-11', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', 15, NOW(), NOW()),
+(1008, '홍길동8', '1988-07-17', 'hong8@test.com', '$2a$10$sawUeZA9T6nCJt7uu6VwL.jT.yXmwLRgvr6I0wl.ff84GNjw6XNua', '010-1111-1008', '', '2024-01-12', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', 15, NOW(), NOW()),
+(1009, '홍길동9', '1987-06-24', 'hong9@test.com', '$2a$10$sawUeZA9T6nCJt7uu6VwL.jT.yXmwLRgvr6I0wl.ff84GNjw6XNua', '010-1111-1009', '', '2024-01-13', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', 15, NOW(), NOW()),
+(1010, '홍길동10', '1986-05-30', 'hong10@test.com', '$2a$10$sawUeZA9T6nCJt7uu6VwL.jT.yXmwLRgvr6I0wl.ff84GNjw6XNua', '010-1111-1010', '', '2024-01-14', 'D003', 'G1', 'USER', 'NORMAL', 'ACTIVE', '0000', '0000', 15, NOW(), NOW());
