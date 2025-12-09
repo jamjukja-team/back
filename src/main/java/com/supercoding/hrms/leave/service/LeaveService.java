@@ -128,7 +128,7 @@ public class LeaveService {
 
             long diff = d2.toEpochDay() - d1.toEpochDay();
 
-            return (double) diff;
+            return (double) diff + 1;
         }else{ // 병가, 경조
             return 0.0;
         }
