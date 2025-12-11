@@ -1,14 +1,12 @@
 package com.supercoding.hrms.attendance.dto.request.update;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
-@Data
+@Getter
 @NoArgsConstructor
 public class UpdateAttendanceRequestDto {
-    private Long updatedBy;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private String date;
+    private String startTime;
+    private String endTime;
 }

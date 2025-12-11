@@ -243,7 +243,7 @@ public class EmpService {
                 .orElseThrow(() -> new CustomException(CustomMessage.EMPLOYEE_NOT_FOUND));
 
         // 퇴직 처리
-        employee.retire(request.getReason(), request.getRegisterId());
+        employee.retire(request.getReason(), request.getRegisterId(), request.getRetireDate());
     }
 
     public EmployeeMetaDataResponseDto getEmployeeMetadata(Long empId) {

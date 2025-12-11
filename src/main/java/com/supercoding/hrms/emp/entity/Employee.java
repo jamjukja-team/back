@@ -90,14 +90,17 @@ public class Employee {
     @Column(name= "update_at")
     private LocalDate updateAt;
 
-    @Column(name= "up_emp_id",nullable = false, length = 4)
+    @Column(name= "up_emp_id", nullable = false, length = 4)
     private String upEmpId;
 
     @Column(name = "remain_leave")
     private Double remainLeave;
 
-    @Column(name = "exit_reason", length = 200)
-    private String exitReason;
+    @Column(name = "retire_reason", length = 200)
+    private String retireReason;
+
+    @Column(name = "retire_date", length = 20)
+    private String retireDate;
 
     public void updateEmployeeInfo(EmployeeUpdateRequestDto req) {
         if (req.getEmail() != null && !req.getEmail().isBlank() && !req.getEmail().equals(this.email)) {
@@ -135,9 +138,10 @@ public class Employee {
         this.photo = photo;
     }
 
-    public void retire(String reason, String registerId) {
+    public void retire(String reason, String registerId, String retireDate) {
         this.empStatusCd = "RETIRED";
-        this.exitReason = reason;
+        this.retireReason = reason;
         this.upEmpId = registerId;
+        this.retireDate = retireDate;
     }
 }
