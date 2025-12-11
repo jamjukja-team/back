@@ -3,9 +3,13 @@ package com.supercoding.hrms.attendance.service;
 import com.supercoding.hrms.attendance.domain.Attendance;
 import com.supercoding.hrms.attendance.dto.AdminAttendanceDailyDto;
 import com.supercoding.hrms.attendance.dto.AdminWeeklyAttendanceDto;
+import com.supercoding.hrms.attendance.dto.request.update.UpdateAttendanceRequestDto;
 import com.supercoding.hrms.attendance.dto.response.AdminMonthlyAttendanceResponseDto;
+import com.supercoding.hrms.attendance.dto.response.AttendanceDetailResponse;
 import com.supercoding.hrms.attendance.repository.AttendanceRepository;
 import com.supercoding.hrms.com.entity.CommonDetail;
+import com.supercoding.hrms.com.exception.CustomException;
+import com.supercoding.hrms.com.exception.CustomMessage;
 import com.supercoding.hrms.com.repository.CommonDetailRepository;
 import com.supercoding.hrms.emp.entity.Employee;
 import com.supercoding.hrms.emp.repository.EmployeeRepository;
@@ -15,6 +19,7 @@ import com.supercoding.hrms.leave.repository.LeaveRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -24,6 +29,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.apache.catalina.manager.StatusTransformer.formatTime;
 
 @Service
 @RequiredArgsConstructor
@@ -206,6 +213,76 @@ public class AdminAttendanceService {
         return results;
     }
 
+    public AttendanceDetailResponse getAttendances(Long attendanceId) {
+        Attendance attendance = attendanceRepository.findById(attendanceId).orElseThrow(() -> new CustomException(CustomMessage.ATTENDANCE_NOT_FOUND));
+        int totalMinutes = attendance.calculateWorkingMinutes();
+        Employee emp = attendance.getEmployee();
+
+        return AttendanceDetailResponse.builder()
+                .attendanceId(attendance.getAttendanceId())
+                .empNo(emp.getEmpNo())
+                .empName(emp.getEmpNm())
+                .date(attendance.getStartTime().toLocalDate())
+                .startTime(formatTime(attendance.getStartTime()))
+                .endTime(formatTime(attendance.getEndTime()))
+                .totalWorkingTime(formatWorkingTime(totalMinutes))
+                .build();
+    }
+
+    @Transactional
+    public AttendanceDetailResponse updateAttendance(Long attendanceId, UpdateAttendanceRequestDto request) {
+
+        Attendance attendance = attendanceRepository.findById(attendanceId)
+                .orElseThrow(() -> new CustomException(CustomMessage.ATTENDANCE_NOT_FOUND));
+
+        // 1. 날짜 파싱
+        LocalDate date = LocalDate.parse(request.getDate());
+
+        // 2. 시간 파싱 (24시간제 HH:mm)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        LocalTime start = LocalTime.parse(request.getStartTime(), formatter);
+        LocalTime end = LocalTime.parse(request.getEndTime(), formatter);
+
+        // 3. 유효성 검사: 출근시간이 퇴근시간보다 뒤일 수 없음
+        if (start.isAfter(end)) {
+            throw new CustomException(CustomMessage.INVALID_TIME_RANGE);
+        }
+
+        // 4. LocalDateTime 생성
+        LocalDateTime startDateTime = LocalDateTime.of(date, start);
+        LocalDateTime endDateTime = LocalDateTime.of(date, end);
+
+        // 5. 엔티티 수정
+        attendance.setStartTime(startDateTime);
+        attendance.setEndTime(endDateTime);
+
+        // 6. 총 근무시간 계산 (분 단위)
+        int totalMinutes = attendance.calculateWorkingMinutes();
+
+        // 7. DTO 반환
+        return AttendanceDetailResponse.builder()
+                .attendanceId(attendance.getAttendanceId())
+                .empNo(attendance.getEmployee().getEmpNo())
+                .empName(attendance.getEmployee().getEmpNm())
+                .date(date)
+                .startTime(request.getStartTime())
+                .endTime(request.getEndTime())
+                .totalWorkingTime(formatWorkingTime(totalMinutes))
+                .build();
+    }
+
+    private String formatTime(LocalDateTime time) {
+        if (time == null) return null;
+        return time.toLocalTime().toString();
+    }
+
+    private String formatWorkingTime(int minutes) {
+        int hour = minutes / 60;
+        int min = minutes % 60;
+        return hour + "시간 " + min + "분";
+    }
+
     private Specification<Employee> deptEq(String deptId) {
         return (Root<Employee> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
 
@@ -270,4 +347,5 @@ public class AdminAttendanceService {
 
         target.getDays().add(daily);
     }
+
 }

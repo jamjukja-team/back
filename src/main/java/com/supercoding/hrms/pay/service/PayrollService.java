@@ -287,8 +287,8 @@ public class PayrollService {
                 empInfo.getEmpNm(),
                 empInfo.getDeptNm(),
                 empInfo.getGradeNm(),
-                getHour(empId,false),
-                getHour(empId,true),
+                getHour(empId,false),//기본근무시간
+                getHour(empId,true),//연장근무시간으로 보겠다.
                 calcPay(160, workPay, false),
                 calcPay(10, 0, true)
         );
@@ -300,7 +300,7 @@ public class PayrollService {
         ReadWorkhoursRequestDto param = new ReadWorkhoursRequestDto();
         param.setEmpId(empId);
         param.setIsOvertime(isOverHour);
-
+        //사원 id와 연장근무 기본근무 판단해서 각각 시간을 select
         List<WorkhourResponseDto> workHourList = workhourService.getWorkhours(param); // empId와 overHour, workHour 둘중 하나 선택하는 걸 받아서  해당 되는 WorkhourResponseDto의 리스트들 불러옴
 
         if (isOverHour){

@@ -32,6 +32,8 @@ public enum CustomMessage {
     DEPARTMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 부서를 찾을 수 없습니다."),
     GRADE_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 직급을 찾을 수 없습니다."),
 
+    INVALID_TIME_RANGE(HttpStatus.BAD_REQUEST, "출근 시간이 퇴근 시간보다 늦을 수 없습니다."),
+    ATTENDANCE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 출퇴근 기록을 찾을 수 없습니다."),
     NO_ATTENDANCE_FOR_CHECKOUT(HttpStatus.BAD_REQUEST,"출근 기록이 없어 퇴근 처리를 진행할 수 없습니다."),
     ALREADY_CHECKED_IN(HttpStatus.CONFLICT,"이미 출근 기록이 있어 출근 처리를 진행할 수 없습니다.");
 

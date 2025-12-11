@@ -1,5 +1,7 @@
 package com.supercoding.hrms.attendance.controller;
 
+import com.supercoding.hrms.attendance.dto.request.update.UpdateAttendanceRequestDto;
+import com.supercoding.hrms.attendance.dto.response.AttendanceDetailResponse;
 import com.supercoding.hrms.attendance.service.AdminAttendanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,30 +19,13 @@ public class AttendanceAdminController {
         return ResponseEntity.ok(adminAttendanceService.listAttendances(yyyymm, deptId, gradeId, name));
     }
 
+    @GetMapping("/{attendanceId}")
+    public ResponseEntity<AttendanceDetailResponse> getAttendances(@PathVariable Long attendanceId) {
+        return ResponseEntity.ok(adminAttendanceService.getAttendances(attendanceId));
+    }
 
-//    @GetMapping
-//    public ResponseEntity<List<AttendanceResponseDto>> findAll(@RequestBody ReadAttendanceRequestDto request) {
-//        List <AttendanceResponseDto> responses = attendanceService.findAll(request);
-//        return ResponseEntity.ok(responses);
-//    }
-//
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Boolean> updateAttendance(
-//            @PathVariable Long id,
-//            @RequestBody UpdateAttendanceRequestDto request) {
-//        attendanceService.updateAttendance(id,  request);
-//        return ResponseEntity.ok(true);
-//    }
-//
-//    @DeleteMapping
-//    public ResponseEntity<Boolean> deleteAttendances(@RequestBody DeleteAttendanceRequestDto request) {
-//        attendanceService.delete(request.getIds());
-//        return ResponseEntity.ok(true);
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Boolean> deleteAttendance(@PathVariable Long id) {
-//        attendanceService.delete(List.of(id));
-//        return ResponseEntity.ok(true);
-//    }
+    @PatchMapping("/{attendanceId}")
+    public ResponseEntity<?> updateAttendance(@PathVariable Long attendanceId, @RequestBody UpdateAttendanceRequestDto request) {
+        return ResponseEntity.ok(adminAttendanceService.updateAttendance(attendanceId, request));
+    }
 }
