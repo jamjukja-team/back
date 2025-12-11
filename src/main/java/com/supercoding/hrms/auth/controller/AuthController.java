@@ -35,7 +35,7 @@ public class AuthController {
         refreshCookie.setMaxAge(7 * 24 * 60 * 60);//7일
         response.addCookie(refreshCookie);
 
-        return ResponseEntity.ok(new AccessTokenResponseDto(tokens.getAccessToken(), tokens.getRoleCd(), tokens.getEmpId(), tokens.getEmpNo(), tokens.getEmpNm()));
+        return ResponseEntity.ok(new AccessTokenResponseDto(tokens.getAccessToken(), tokens.getRoleCd(), tokens.getEmpId(), tokens.getEmpNo(), tokens.getEmpNm(), tokens.getAttendanceId(), tokens.getStartTime(), tokens.getEndTime()));
     }
 
     @PatchMapping("/set-password")

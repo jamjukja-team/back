@@ -1,5 +1,7 @@
 package com.supercoding.hrms.auth.service;
 
+import com.supercoding.hrms.attendance.domain.Attendance;
+import com.supercoding.hrms.attendance.repository.AttendanceJpaRepository;
 import com.supercoding.hrms.auth.dto.request.LoginParamRequestDto;
 import com.supercoding.hrms.auth.dto.request.InitResetPasswordRequestDto;
 import com.supercoding.hrms.auth.dto.request.ResetPasswordDto;
@@ -22,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -34,6 +37,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final CommonMailService commonMailService;
+    private final AttendanceJpaRepository attendanceJpaRepository;
 
     @Transactional
     public LoginParamResponseDto login(LoginParamRequestDto request) {
@@ -56,7 +60,29 @@ public class AuthService {
         //새로운 refresh 토큰 생성
         refreshTokenRepository.save(RefreshToken.builder().empId(employee.getEmpId()).refreshToken(refreshToken).build());
 
-        return new LoginParamResponseDto(accessToken, refreshToken, employee.getRoleCd(), employee.getEmpId(), employee.getEmpNo(), employee.getEmpNm());
+        //오늘 근태사항 가져오가
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = today.plusDays(1).atStartOfDay();
+
+        Attendance latestAttendance =
+                attendanceJpaRepository.findTodayLatestAttendance(
+                        employee.getEmpId(),
+                        startOfDay,
+                        endOfDay
+                );
+
+        Long attendanceId = null;
+        LocalDateTime startTime = null;
+        LocalDateTime endTime = null;
+
+        if (latestAttendance != null) {
+            attendanceId = latestAttendance.getAttendanceId();
+            startTime = latestAttendance.getStartTime();
+            endTime = latestAttendance.getEndTime();
+        }
+
+        return new LoginParamResponseDto(accessToken, refreshToken, employee.getRoleCd(), employee.getEmpId(), employee.getEmpNo(), employee.getEmpNm(), attendanceId, startTime, endTime);
     }
 
     @Transactional

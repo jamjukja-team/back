@@ -34,6 +34,19 @@ public interface AttendanceJpaRepository extends JpaRepository<Attendance, Long>
             @Param("end") LocalDateTime end,
             @Param("empId") Long empId
     );
+    @Query("""
+    SELECT t 
+      FROM Attendance t
+     WHERE t.employee.empId = :empId
+       AND t.startTime >= :start
+       AND t.startTime < :end
+     ORDER BY t.attendanceId DESC
+    """)
+    Attendance findTodayLatestAttendance(
+            @Param("empId") Long empId,
+            @Param("start") LocalDateTime startOfDay,
+            @Param("end") LocalDateTime endOfDay
+    );
 //
 //    @Query("SELECT a.empId FROM Attendance a WHERE a.empId IN :ids")
 //    List<Long> findExistingIds(@Param("ids") Collection<Long> ids);
