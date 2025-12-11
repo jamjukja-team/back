@@ -308,7 +308,7 @@ public class PayrollService {
         // 전달의 마지막일
         LocalDateTime end   = prevMonth.plusMonths(1).atDay(1).atStartOfDay(); // 2024-02-01 00:00
 
-        List<Attendance> attendanceList = attendanceJpaRepository.findByCreatedAtBetween(start, end, empId);
+        List<Attendance> attendanceList = attendanceJpaRepository.findByStartTimeBetweenAndEmployee_EmpId(start, end, empId);
 
         int defaultWorkHour = 0;
         int overWorkHour = 0;

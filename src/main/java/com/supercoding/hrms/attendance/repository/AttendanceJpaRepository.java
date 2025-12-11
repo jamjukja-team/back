@@ -26,8 +26,10 @@ public interface AttendanceJpaRepository extends JpaRepository<Attendance, Long>
     );
 
     @Query("SELECT t FROM Attendance t " +
-            "WHERE t.startTime >= :startAND t.startTime < :end and t.empId = :empId")
-    List<Attendance> findByCreatedAtBetween(
+            "WHERE t.startTime >= :start " +
+            "AND t.startTime < :end " +
+            "AND t.employee.empId = :empId")
+    List<Attendance> findByStartTimeBetweenAndEmployee_EmpId(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
             @Param("empId") Long empId
