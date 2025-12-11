@@ -2,10 +2,12 @@ package com.supercoding.hrms.pay.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.supercoding.hrms.attendance.domain.Attendance;
 import com.supercoding.hrms.attendance.dto.request.read.ReadWorkhoursRequestDto;
 import com.supercoding.hrms.attendance.dto.response.WorkhourResponseDto;
+import com.supercoding.hrms.attendance.repository.AttendanceJpaRepository;
+import com.supercoding.hrms.attendance.repository.AttendanceRepository;
 import com.supercoding.hrms.attendance.service.WorkhourService;
-import com.supercoding.hrms.emp.dto.response.EmployeeDetailResponseDto;
 import com.supercoding.hrms.emp.entity.Employee;
 import com.supercoding.hrms.emp.repository.EmployeeRepository;
 import com.supercoding.hrms.emp.service.EmpService;
@@ -21,17 +23,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.InputStream;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static com.supercoding.hrms.pay.domain.PayrollStatus.CALCULATING;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -43,13 +42,11 @@ public class PayrollService {
     private final ItemNmRepository itemNmRepository;
     private final PayRepository payRepository;
 
-    private final EmpService empService;
-
     // 급여 json 파일 가져와서 타입 매핑을 해주기 위함
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final WorkhourService workhourService;
     private final EmployeeRepository employeeRepository;
+    private final AttendanceJpaRepository attendanceJpaRepository;
 
     public void testCreate(){
         testSaveEmpPay(7L);
@@ -212,7 +209,7 @@ public class PayrollService {
                 log.info("해당 달에 등록 된 내역이 없습니다.");
                 return null;
             }else{
-                return setPayrollType(filterPayrollList.get(0));
+                return setPayrollType(filterPayrollList.get(0), (filterPayrollList.get(0).getPayDate()).substring(0, 6));
             }
         }
     }
@@ -225,7 +222,7 @@ public class PayrollService {
         Payroll payroll = payrollRepository.findById(histId)
                 .orElseThrow(() -> new RuntimeException("해당 급여이력이 없습니다."));
 
-        return setPayrollType(payroll);
+        return setPayrollType(payroll, (payroll.getPayDate()).substring(0, 6));
     }
 
     //R(L) (다건 조회)
@@ -259,13 +256,13 @@ public class PayrollService {
             payrolls = payrolls.stream().filter(item -> item.getStatus().equals(status)).toList();
         }
 
-        return payrolls.stream().map(item -> setPayrollType(item)).toList();
+        return payrolls.stream().map(item -> setPayrollType(item, payMonth)).toList();
     }
 
     // 단건과 다건 조회에서 둘다 쓰이니까 중복으로 쓰여서 분리해서 따로 작성함
-    public PayrollType setPayrollType(Payroll payroll){
+    public PayrollType setPayrollType(Payroll payroll, String payMonth){
 
-        PayrollType payrollType = getEmpInfo(payroll.getEmpId());
+        PayrollType payrollType = getEmpInfo(payroll.getEmpId(), payMonth);
         payrollType.setPayHistId(payroll.getPayHistId());
         payrollType.setEmpId(payroll.getEmpId());
         payrollType.setStatus(PayrollStatus.from(payroll.getStatus()).getDisplayName());
@@ -276,54 +273,70 @@ public class PayrollService {
     }
 
     // 사원쪽에서 가져온 애라서 따로 빼줌.
-    public PayrollType getEmpInfo(Long empId){
+    public PayrollType getEmpInfo(Long empId, String payMonth){
         Integer workPay = payRepository.findById(empId)
                 .map(Pay::getWorkPay)
                 .orElse(0);
 
-        EmployeeDetailResponseDto empInfo = empService.getEmployeeByAdmin(empId);
+        Optional<Employee> empInfo = employeeRepository.findById(empId);
 
         PayrollType payrollType = new PayrollType(
-                empInfo.getEmpNm(),
-                empInfo.getDeptNm(),
-                empInfo.getGradeNm(),
-                getHour(empId,false),
-                getHour(empId,true),
+                empInfo.get().getEmpNm(),
+                empInfo.get().getDepartment().getDeptNm(),
+                empInfo.get().getGrade().getGradeNm(),
+                getHour(empId,payMonth).get("workHour"),
+                getHour(empId,payMonth).get("overHour"),
                 calcPay(160, workPay, false),
                 calcPay(10, 0, true)
         );
         return payrollType;
     }
 
-    // 총 근무시간 + 오버타임 계산
-    public Integer getHour(Long empId, Boolean isOverHour){
-        ReadWorkhoursRequestDto param = new ReadWorkhoursRequestDto();
-        param.setEmpId(empId);
-        param.setIsOvertime(isOverHour);
+    // 총 근무시간
+    public Map<String, Integer> getHour(Long empId, String payMonth){
+        Map<String, Integer> result = new HashMap<>();
 
-        List<WorkhourResponseDto> workHourList = workhourService.getWorkhours(param); // empId와 overHour, workHour 둘중 하나 선택하는 걸 받아서  해당 되는 WorkhourResponseDto의 리스트들 불러옴
+        // 입력 받은 YYYYMM을 YearMonth로 변환
+        YearMonth inputYm = YearMonth.parse(payMonth, DateTimeFormatter.ofPattern("yyyyMM"));
 
-        if (isOverHour){
-            int overHour = (int) workHourList.stream().mapToLong(WorkhourResponseDto::getOvertimeHour).sum();
-            int overMinute = (int) workHourList.stream().mapToLong(WorkhourResponseDto::getOvertimeMinute).sum();
+        // 전달 구하기
+        YearMonth prevMonth = inputYm.minusMonths(1);
 
-            int lastMinute = overMinute%60>30?1:0;
+        // 전달의 시작일
+        LocalDateTime start = prevMonth.atDay(1).atStartOfDay();
 
-            overHour = overHour + (overMinute/60) + lastMinute;
+        // 전달의 마지막일
+        LocalDateTime end   = prevMonth.plusMonths(1).atDay(1).atStartOfDay(); // 2024-02-01 00:00
 
-            return overHour;
-        }else{
-            int workHour = (int) workHourList.stream().mapToLong(WorkhourResponseDto::getHour).sum();
-            int workMinute = (int) workHourList.stream().mapToLong(WorkhourResponseDto::getMinute).sum();
+        List<Attendance> attendanceList = attendanceJpaRepository.findByCreatedAtBetween(start, end, empId);
 
-            int lastMinute = workMinute%60>30?1:0;
+        int defaultWorkHour = 0;
+        int overWorkHour = 0;
 
-            workHour = workHour + (workMinute/60) + lastMinute;
+        for (Attendance workHour : attendanceList){
+            LocalDateTime startTime = workHour.getStartTime();
+            LocalDateTime endTime = workHour.getEndTime();
 
-            return workHour;
+            // 퇴근시간 18시 기준으로 설정
+            LocalDateTime eighteen = endTime.toLocalDate().atTime(18, 0);
+
+            //18시 기준으로
+            Duration normalDuration = Duration.between(startTime, endTime.isBefore(eighteen) ? endTime : eighteen);
+            int normalMinutes = (int) Math.max(normalDuration.toMinutes(), 0);
+            defaultWorkHour += normalMinutes;
+
+            Duration overtimeDuration = endTime.isAfter(eighteen) ? Duration.between(eighteen, endTime) : Duration.ZERO;
+            int overtimeMinutes = (int) overtimeDuration.toMinutes();
+            overWorkHour += overtimeMinutes;
         }
 
+        result.put("workHour", defaultWorkHour);
+        result.put("overHour", overWorkHour);
+
+        return result;
     }
+
+
 
     //전체 사원 조회 받아서 부서별 필터링
     public List<Employee> filterByDept(String deptId, List<Employee> employees){

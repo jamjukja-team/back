@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -22,6 +23,14 @@ public interface AttendanceJpaRepository extends JpaRepository<Attendance, Long>
             @Param("id") Long empId,
             @Param("startTime") LocalDateTime startTime,
             @Param("endTime") LocalDateTime endTime
+    );
+
+    @Query("SELECT t FROM Attendance t " +
+            "WHERE t.startTime >= :startAND t.startTime < :end and t.empId = :empId")
+    List<Attendance> findByCreatedAtBetween(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end,
+            @Param("empId") Long empId
     );
 //
 //    @Query("SELECT a.empId FROM Attendance a WHERE a.empId IN :ids")
