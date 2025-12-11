@@ -46,7 +46,7 @@ public class PayrollController {
 
     //R (Read)
     //특정 급여 이력 상세 조회(관리자용)
-    @GetMapping("/{histId}")
+    @GetMapping("admin/{histId}")
     public ResponseEntity<PayrollType> getPayroll(@PathVariable Long histId) {
         // 특정 id를 넣어서 서비스의 getPayroll 실행
         PayrollType response = payrollService.getPayroll(histId);
