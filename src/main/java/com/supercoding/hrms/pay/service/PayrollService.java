@@ -49,6 +49,9 @@ public class PayrollService {
     private final AttendanceJpaRepository attendanceJpaRepository;
 
     public void testCreate(){
+        payrollRepository.deleteAll();
+        payrollDetailRepository.deleteAll();
+
         testSaveEmpPay(7L);
         testSaveEmpPay(8L);
         testSaveEmpPay(9L);
