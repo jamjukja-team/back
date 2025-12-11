@@ -15,7 +15,7 @@ import java.time.LocalTime;
 @Setter
 @Builder
 public class AdminAttendanceDailyDto {
-
+    private Long attendanceId;
     private String date;
     private String startTime;
     private String endTime;

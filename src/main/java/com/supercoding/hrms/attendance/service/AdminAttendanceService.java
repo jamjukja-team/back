@@ -118,15 +118,29 @@ public class AdminAttendanceService {
 
                     int minutes = resolveLeaveMinutes(type); // 480 or 240
 
-                    daily = AdminAttendanceDailyDto.builder()
-                            .date(cursor.toString())
-                            .weekNumber(week)
-                            .workingMinutes(minutes)
-                            .status(null)          // 휴가는 status 없음
-                            .statusName(null)      // 휴가는 statusName 없음
-                            .remarkCd(type)        // 그대로 AL, SL, EL, BHL, AHL
-                            .remark(leaveName)     // DB com_nm: 연차, 병가, 오전반차...
-                            .build();
+                    if(type.equals("AL")) {
+                        daily = AdminAttendanceDailyDto.builder()
+                                .date(cursor.toString())
+                                .weekNumber(week)
+                                .workingMinutes(minutes)
+                                .status(null)          // 휴가는 status 없음
+                                .statusName(null)      // 휴가는 statusName 없음
+                                .remarkCd(type)        // 그대로 AL, SL, EL, BHL, AHL
+                                .remark(leaveName)     // DB com_nm: 연차, 병가, 오전반차...
+                                .build();
+
+                    } else {
+                        daily = AdminAttendanceDailyDto.builder()
+                                .attendanceId(at.getAttendanceId())
+                                .date(cursor.toString())
+                                .weekNumber(week)
+                                .workingMinutes(minutes)
+                                .status(null)          // 휴가는 status 없음
+                                .statusName(null)      // 휴가는 statusName 없음
+                                .remarkCd(type)        // 그대로 AL, SL, EL, BHL, AHL
+                                .remark(leaveName)     // DB com_nm: 연차, 병가, 오전반차...
+                                .build();
+                    }
                 }
 
                 // =============== 결근 ===============
@@ -184,6 +198,7 @@ public class AdminAttendanceService {
                     }
 
                     daily = AdminAttendanceDailyDto.builder()
+                            .attendanceId(at.getAttendanceId())
                             .date(cursor.toString())
                             .weekNumber(week)
                             .startTime(startDt != null ? startDt.toString() : null)
