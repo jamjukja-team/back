@@ -168,4 +168,24 @@ public class AuthService {
         commonMailService.sendMailMessage(email, subject, text);
     }
 
+    public void resendMail(InitResetPasswordRequestDto request) {
+        Employee employee = employeeRepository.findByEmail(request.getEmail()).orElseThrow(() -> new CustomException(CustomMessage.EMPLOYEE_NOT_FOUND));
+
+        resendMail(employee.getEmail(), commonMailService.getInitialPasswordUrl(employee.getEmail()));
+    }
+
+    private void resendMail(String email, String url) {
+        String subject = "[HRMS] 초대 메일 안내";
+        String text = """
+            안녕하세요.
+            HRMS 계정 초대메일 안내드립니다.
+
+            아래 링크를 통해 새 비밀번호를 설정해 주세요:
+            %s
+
+            감사합니다.
+            """.formatted(url);
+
+        commonMailService.sendMailMessage(email, subject, text);
+    }
 }

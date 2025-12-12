@@ -89,4 +89,11 @@ public class AuthController {
         return ResponseEntity.ok("비밀번호가 초기화되었습니다.");
     }
 
+    @PostMapping("/resend-mail")
+    public ResponseEntity<String> resendMail(@RequestBody InitResetPasswordRequestDto request) {
+        authService.resendMail(request);
+
+        return ResponseEntity.ok("메일 전송에 성공했습니다.");
+    }
+
 }
