@@ -59,7 +59,7 @@ public class JwtTokenProvider {
             String tokenType = claims.get("token_type", String.class);
 
             if ("REFRESH".equals(tokenType)) {
-                throw new CustomException(CustomMessage.FAIL_REFRESH_TOKEN_EXPIRED);
+                throw new CustomException(CustomMessage.TOKEN_EXPIRED);
             }
             throw new CustomException(CustomMessage.FAIL_TOKEN_INVALID);
 
@@ -84,7 +84,7 @@ public class JwtTokenProvider {
 
         } catch (ExpiredJwtException ex) {
             // 서명은 맞고, 만료된 경우만 여기로 들어온다.
-            return ex.getClaims().getSubject();
+            throw new CustomException(CustomMessage.TOKEN_EXPIRED);
 
         } catch (SignatureException ex) {
             // 서명 불일치 → 위조된 토큰
