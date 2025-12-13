@@ -73,22 +73,86 @@ public class PayrollService {
                 null,
                 empId,
                 "BASIC",
-                50000,
+                3000000,
                 ""
         );
 
         PayrollDetail payrollDetail2 = new PayrollDetail(
                 null,
                 empId,
-                "TAX",
-                10000,
+                "OT",
+                300000,
                 ""
         );
 
-        List<PayrollDetail> payrollDetailList = Arrays.asList(payrollDetail1, payrollDetail2);
-        payrollDetailRepository.saveAll(payrollDetailList);
-    }
+        PayrollDetail payrollDetail3 = new PayrollDetail(
+                null,
+                empId,
+                "MEAL",
+                300000,
+                ""
+        );
 
+        PayrollDetail payrollDetail4 = new PayrollDetail(
+                null,
+                empId,
+                "INS",
+                180000,
+                ""
+        );
+
+        PayrollDetail payrollDetail5 = new PayrollDetail(
+                null,
+                empId,
+                "TAX",
+                45000,
+                ""
+        );
+
+        PayrollDetail payrollDetail6 = new PayrollDetail(
+                null,
+                empId,
+                "LTAX",
+                4500,
+                ""
+        );
+
+        PayrollItem payrollItem1 = new PayrollItem(
+                "BASIC"
+                , "기본급"
+        );
+
+        PayrollItem payrollItem2 = new PayrollItem(
+                "OT"
+                , "연장수당"
+        );
+
+        PayrollItem payrollItem3 = new PayrollItem(
+                "MEAL"
+                , "식대"
+        );
+
+        PayrollItem payrollItem4 = new PayrollItem(
+                "INS"
+                , "4대보험"
+        );
+
+        PayrollItem payrollItem5 = new PayrollItem(
+                "TAX"
+                , "소득세"
+        );
+
+        PayrollItem payrollItem6 = new PayrollItem(
+                "LTAX"
+                , "지방소득세"
+        );
+
+        List<PayrollDetail> payrollDetailList = Arrays.asList(payrollDetail1, payrollDetail2, payrollDetail3, payrollDetail4, payrollDetail5, payrollDetail6);
+        payrollDetailRepository.saveAll(payrollDetailList);
+
+        List<PayrollItem> payrollItemList = Arrays.asList(payrollItem1, payrollItem2, payrollItem3, payrollItem4, payrollItem5, payrollItem6);
+        itemNmRepository.saveAll(payrollItemList);
+    }
 
     /**
      * resources/payroll-data.json 파일을 읽어서 DB에 저장

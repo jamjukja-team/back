@@ -37,7 +37,7 @@ public class PayrollController {
 
     //R (Read)
     //특정 급여 이력 상세 조회(직원용)
-    @GetMapping("/{id}")
+    @GetMapping()
     public ResponseEntity<PayrollType> getPayrollEmp(@RequestParam String payMonth, @RequestParam Long empId) {
         // 특정 id를 넣어서 서비스의 getPayroll 실행
         PayrollType response = payrollService.getPayrollEmp(payMonth, empId);
