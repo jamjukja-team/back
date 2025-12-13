@@ -52,6 +52,7 @@ public class PayrollService {
         payrollRepository.deleteAll();
         payrollDetailRepository.deleteAll();
 
+        testSaveEmpPay(2L);
         testSaveEmpPay(7L);
         testSaveEmpPay(8L);
         testSaveEmpPay(9L);
