@@ -109,6 +109,7 @@ public class AuthService {
 
             return new RefreshResponseDto(jwtTokenProvider.generateAccessToken(email), null);
         }
+        System.out.println("test2");
         throw new CustomException(CustomMessage.FAIL_TOKEN_INVALID);
     }
 

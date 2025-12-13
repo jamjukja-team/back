@@ -39,12 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String accessToken = resolveToken(request);
 
-        if(path.equals("/api/auth/refresh")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        try {
+       try {
             if (accessToken != null) {
                 String email = jwtTokenProvider.getEmailFromExpiredToken(accessToken);
 
