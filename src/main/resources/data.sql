@@ -7,7 +7,9 @@ VALUES
 ('ACCOUNT_STATUS', '계정상태', '0000', '0000', NOW(), NOW()),
 ('USE_STATUS', '사용여부', '0000', '0000', NOW(), NOW()),
 ('LEAVE_TYPE', '휴가유형', '0000', '0000', NOW(), NOW()),
-('LEAVE_STATUS', '휴가상태', '0000', '0000', NOW(), NOW());
+('LEAVE_STATUS', '휴가상태', '0000', '0000', NOW(), NOW()),
+('PAY_STATUS', '지급상태', '0000', '0000', NOW(), NOW()),
+('PAY_ITEM',   '급여항목', '0000', '0000', NOW(), NOW());
 
 -- ================================
 -- 공통 상세 (COM_DETAIL)
@@ -28,7 +30,17 @@ VALUES
 ('BHL', 'LEAVE_TYPE', '오전반차',  '0000','0000',NOW(),NOW()),
 ('AHL', 'LEAVE_TYPE', '오후반차',  '0000','0000',NOW(),NOW()),
 ('SL',  'LEAVE_TYPE', '병가',      '0000','0000',NOW(),NOW()),
-('EL',  'LEAVE_TYPE', '경조',      '0000','0000',NOW(),NOW());
+('EL',  'LEAVE_TYPE', '경조',      '0000','0000',NOW(),NOW()),
+
+('CALCULATING', 'PAY_STATUS', '계산중',   '0000', '0000', NOW(), NOW()),
+('CONFIRMED',   'PAY_STATUS', '급여확정', '0000', '0000', NOW(), NOW()),
+('PAID',        'PAY_STATUS', '지급완료', '0000', '0000', NOW(), NOW()),
+('BASIC', 'PAY_ITEM', '기본급',     '0000', '0000', NOW(), NOW()),
+('OT',    'PAY_ITEM', '연장수당',   '0000', '0000', NOW(), NOW()),
+('MEAL',  'PAY_ITEM', '식대',       '0000', '0000', NOW(), NOW()),
+('INS',   'PAY_ITEM', '4대보험',    '0000', '0000', NOW(), NOW()),
+('TAX',   'PAY_ITEM', '소득세',     '0000', '0000', NOW(), NOW()),
+('LTAX',  'PAY_ITEM', '지방소득세', '0000', '0000', NOW(), NOW());
 
 -- ================================
 -- 부서 (DEPARTMENT)
